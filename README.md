@@ -1,5 +1,4 @@
-Weld
-====
+# Weld
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/weld/user)
 ![GH Actions Build Status](https://github.com/weld/core/actions/workflows/ci-actions.yml/badge.svg?branch=3.1)
@@ -12,15 +11,13 @@ Weld is integrated into many Java EE application servers such as WildFly, JBoss 
 
 See http://weld.cdi-spec.org for more details.
 
-Building Weld
--------------
+## Building Weld
 
 To build Weld simply run
 
 > $ mvn clean install
 
-Upgrading Weld in WildFly
--------------------------
+## Upgrading Weld in WildFly
 
 Firstly, set the `JBOSS_HOME` environment property to point to your WildFly installation which already contains Weld 3 in older version:
 
@@ -33,8 +30,7 @@ Then, run the upgrade script:
 In the above snippet, `${weld.version}` is the version of Weld you want to use.
 Now you should have patched WildFly in `JBOSS_HOME`.
 
-Running integration tests and the TCK on WildFly
-----------------------------------------------------
+## Running integration tests and the TCK on WildFly
 
 Follow the steps above to set the JBOSS_HOME environment property and to upgrade Weld
 within WildFly. Then, run:
@@ -43,7 +39,7 @@ within WildFly. Then, run:
 
 > $ mvn clean verify -Dincontainer -f jboss-tck-runner/pom.xml
 
-If you want to run a specific test you can use the `-Dtest=<test_name>` flag. For example 
+If you want to run a specific test you can use the `-Dtest=<test_name>` flag. For example
 
 > $ mvn clean verify -Dincontainer -f jboss-tck-runner/pom.xml -Dtest=FireEventTest
 
