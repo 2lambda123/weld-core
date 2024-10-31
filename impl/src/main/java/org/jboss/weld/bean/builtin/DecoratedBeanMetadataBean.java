@@ -94,7 +94,7 @@ public class DecoratedBeanMetadataBean extends InterceptedBeanMetadataBean {
 
   @Override
   public String toString() {
-    return "Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers " +
-           "[@Decorated]";
+    return "Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers "
+        + "[@Decorated]";
   }
 }

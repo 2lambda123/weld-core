@@ -70,8 +70,8 @@ public class TimingOutFixedThreadPoolExecutorServices
 
   @Override
   public String toString() {
-    return String.format("TimingOutFixedThreadPoolExecutorServices " +
-                         "[threadPoolSize=%s, keepAliveTime=%s]",
+    return String.format("TimingOutFixedThreadPoolExecutorServices "
+                             + "[threadPoolSize=%s, keepAliveTime=%s]",
                          threadPoolSize, keepAliveTime);
   }
 }

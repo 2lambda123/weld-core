@@ -353,8 +353,8 @@ public class ClientConversationContextTest {
 
     // Test again using the proprietary "nocid" parameter (kept for backwards
     // compatibility)
-    HtmlPage page4 = client.getPage(getPath("/cloud.jsf", cid) + ("&nocid=" +
-                                                                  "true"));
+    HtmlPage page4 = client.getPage(getPath("/cloud.jsf", cid) + ("&nocid="
+                                                                  + "true"));
     assertEquals(Cloud.NAME,
                  getFirstMatchingElement(page4, HtmlSpan.class, "cloudName")
                      .getTextContent());

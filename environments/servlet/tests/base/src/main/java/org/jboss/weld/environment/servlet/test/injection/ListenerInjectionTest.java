@@ -49,12 +49,12 @@ public class ListenerInjectionTest {
     Asset webXml = new ByteArrayAsset(
         extendDefaultWebXml(
             listeners.toString() +
-            ("<servlet><servlet-name>Bat " +
-             "Servlet</servlet-name><servlet-class>") +
+            ("<servlet><servlet-name>Bat "
+             + "Servlet</servlet-name><servlet-class>") +
             BatServlet.class.getName() +
-            ("</servlet-class></servlet> <servlet-mapping><servlet-name>Bat " +
-             "Servlet</servlet-name><url-pattern>/bat</url-pattern></" +
-             "servlet-mapping>"))
+            ("</servlet-class></servlet> <servlet-mapping><servlet-name>Bat "
+             + "Servlet</servlet-name><url-pattern>/bat</url-pattern></"
+             + "servlet-mapping>"))
             .getBytes());
     return baseDeployment(webXml).addClasses(
         BatRequestListener.class, BatSessionListener.class,

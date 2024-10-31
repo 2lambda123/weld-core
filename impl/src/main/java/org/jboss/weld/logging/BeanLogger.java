@@ -49,16 +49,16 @@ public interface BeanLogger extends WeldLogger {
 
   @LogMessage(level = Level.TRACE)
   @Message(id = 1,
-           value = "Exactly one constructor ({0}) annotated with @Inject " +
-                   "defined, using it as the bean constructor for {1}",
+           value = "Exactly one constructor ({0}) annotated with @Inject "
+                   + "defined, using it as the bean constructor for {1}",
            format = Format.MESSAGE_FORMAT)
   void
   foundOneInjectableConstructor(Object param1, Object param2);
 
   @LogMessage(level = Level.TRACE)
   @Message(id = 2,
-           value = "Exactly one constructor ({0}) defined, using it as the " +
-                   "bean constructor for {1}",
+           value = "Exactly one constructor ({0}) defined, using it as the "
+                   + "bean constructor for {1}",
            format = Format.MESSAGE_FORMAT)
   void
   foundDefaultConstructor(Object param1, Object param2);
@@ -119,8 +119,8 @@ public interface BeanLogger extends WeldLogger {
 
   @LogMessage(level = Level.WARN)
   @Message(id = 18,
-           value = "Executing producer field or method {0} on incomplete " +
-                   "declaring bean {1} due to circular injection",
+           value = "Executing producer field or method {0} on incomplete "
+                   + "declaring bean {1} due to circular injection",
            format = Format.MESSAGE_FORMAT)
   void
   circularCall(Object param1, Object param2);
@@ -137,9 +137,9 @@ public interface BeanLogger extends WeldLogger {
   typeParameterMustBeConcrete(Object param1);
 
   @Message(id = 25,
-           value = "Tried to create an EEResourceProducerField, but no " +
-                   "@Resource, @PersistenceContext, @PersistenceUnit, " +
-                   "@WebServiceRef or @EJB is present: {0}",
+           value = "Tried to create an EEResourceProducerField, but no "
+                   + "@Resource, @PersistenceContext, @PersistenceUnit, "
+                   + "@WebServiceRef or @EJB is present: {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   invalidResourceProducerField(Object param1);
@@ -151,8 +151,8 @@ public interface BeanLogger extends WeldLogger {
   IllegalStateException
   securityServicesNotAvailable();
 
-  @Message(id = 27, value = "Transaction Services not available - unable to " +
-                            "obtain the UserTransaction")
+  @Message(id = 27, value = "Transaction Services not available - unable to "
+                            + "obtain the UserTransaction")
   IllegalStateException
   transactionServicesNotAvailable();
 
@@ -201,16 +201,16 @@ public interface BeanLogger extends WeldLogger {
   unexpectedUnwrappedCustomDecorator(Object param1);
 
   @Message(id = 37,
-           value = "Cannot call EJB remove method directly on non-dependent " +
-                   "scoped bean {0}",
+           value = "Cannot call EJB remove method directly on non-dependent "
+                   + "scoped bean {0}",
            format = Format.MESSAGE_FORMAT)
   UnsupportedOperationException
   invalidRemoveMethodInvocation(Object param1);
 
   @Message(id = 38,
-           value = "A bean class that is not a decorator has an injection " +
-                   "point annotated @Delegate\n  at injection point " +
-                   "{0}\n\tat {1}\n  StackTrace:",
+           value = "A bean class that is not a decorator has an injection "
+                   + "point annotated @Delegate\n  at injection point "
+                   + "{0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   delegateNotOnDecorator(Object ip, Object stackElement);
@@ -225,9 +225,9 @@ public interface BeanLogger extends WeldLogger {
 
   @SuppressWarnings({"weldlog:method-sig", "weldlog:msg-value"})
   @Message(id = 40,
-           value = "All stereotypes must specify the same scope or the bean " +
-                   "must declare a scope - declared on {0}, declared " +
-                   "stereotypes [{1}], possible scopes {2}{3}",
+           value = "All stereotypes must specify the same scope or the bean "
+                   + "must declare a scope - declared on {0}, declared "
+                   + "stereotypes [{1}], possible scopes {2}{3}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   multipleScopesFoundFromStereotypes(Object declaredOn, Object stereotypes,
@@ -235,9 +235,8 @@ public interface BeanLogger extends WeldLogger {
 
   @Message(
       id = 41,
-      value =
-          "Specializing bean may not declare a bean name if it is declared " +
-          "by specialized bean\n  specializing: {0}\n  specialized: {1}",
+      value = "Specializing bean may not declare a bean name if it is declared "
+              + "by specialized bean\n  specializing: {0}\n  specialized: {1}",
       format = Format.MESSAGE_FORMAT)
   DefinitionException
   nameNotAllowedOnSpecialization(Object specializing, Object specialized);
@@ -291,24 +290,24 @@ public interface BeanLogger extends WeldLogger {
   producerCastError(Object param1, Object param2, @Cause Throwable cause);
 
   @Message(id = 52,
-           value = "Cannot return null from a non-dependent producer method: " +
-                   "{0}\n\tat {1}\n  StackTrace:",
+           value = "Cannot return null from a non-dependent producer method: "
+                   + "{0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   IllegalProductException
   nullNotAllowedFromProducer(Object param1, Object stackElement);
 
   @Message(id = 53,
-           value = "Producers cannot declare passivating scope and return a " +
-                   "non-serializable class: {0}\n\tat {1}\n  StackTrace:",
+           value = "Producers cannot declare passivating scope and return a "
+                   + "non-serializable class: {0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   IllegalProductException
   nonSerializableProductError(Object param1, Object stackElement);
 
   @Message(id = 54,
-           value = "Producers cannot produce unserializable instances for " +
-                   "injection into an injection point that requires a " +
-                   "passivation capable dependency\n  Producer:  {0}\n\tat " +
-                   "{1}\n  Injection Point:  {2}\n\tat {3}\n  StackTrace:",
+           value = "Producers cannot produce unserializable instances for "
+                   + "injection into an injection point that requires a "
+                   + "passivation capable dependency\n  Producer:  {0}\n\tat "
+                   + "{1}\n  Injection Point:  {2}\n\tat {3}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   IllegalProductException
   unserializableProductInjectionError(Object producer,
@@ -327,7 +326,8 @@ public interface BeanLogger extends WeldLogger {
   tooManyDelegateInjectionPoints(Object param1);
 
   @Message(id = 61,
-           value = "The delegate type does not extend or implement the " +
+           value = "The delegate type does not extend or implement the "
+                   +
                    "decorated type. \n  Decorated type: {0}\n  Decorator: {1}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
@@ -347,16 +347,16 @@ public interface BeanLogger extends WeldLogger {
   multipleDisposeParams(Object param1, Object stackElement);
 
   @Message(id = 67,
-           value = "{0} is not allowed on same method as {1}, see {2}\n\tat " +
-                   "{3}\n  StackTrace:",
+           value = "{0} is not allowed on same method as {1}, see {2}\n\tat "
+                   + "{3}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   inconsistentAnnotationsOnMethod(Object param1, Object param2, Object param3,
                                   Object stackElement);
 
   @Message(id = 68,
-           value = "{0} method {1} is not a business method of {2}\n\tat " +
-                   "{3}\n  StackTrace:",
+           value = "{0} method {1} is not a business method of {2}\n\tat "
+                   + "{3}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   methodNotBusinessMethod(Object methodType, Object param1, Object param2,
@@ -369,15 +369,15 @@ public interface BeanLogger extends WeldLogger {
   simpleBeanAsNonStaticInnerClassNotAllowed(Object param1);
 
   @Message(id = 71,
-           value = "Managed bean with a parameterized bean class must be " +
-                   "@Dependent: {0}",
+           value = "Managed bean with a parameterized bean class must be "
+                   + "@Dependent: {0}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   managedBeanWithParameterizedBeanClassMustBeDependent(Object param1);
 
   @Message(id = 72,
-           value = "Bean declaring a passivating scope must be passivation " +
-                   "capable.  Bean:  {0}",
+           value = "Bean declaring a passivating scope must be passivation "
+                   + "capable.  Bean:  {0}",
            format = Format.MESSAGE_FORMAT)
   DeploymentException
   passivatingBeanNeedsSerializableImpl(Object param1);
@@ -390,38 +390,37 @@ public interface BeanLogger extends WeldLogger {
   finalBeanClassWithDecoratorsNotAllowed(Object param1);
 
   @Message(id = 75,
-           value = "Normal scoped managed bean implementation class has a " +
-                   "public field:  {0}",
+           value = "Normal scoped managed bean implementation class has a "
+                   + "public field:  {0}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   publicFieldOnNormalScopedBeanNotAllowed(Object param1);
 
   @Message(id = 76,
-           value = "Bean constructor must not have a parameter annotated " +
-                   "with {0}: {1}\n\tat {2}\n  StackTrace:",
+           value = "Bean constructor must not have a parameter annotated "
+                   + "with {0}: {1}\n\tat {2}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   parameterAnnotationNotAllowedOnConstructor(Object param1, Object param2,
                                              Object stackElement);
 
-  @Message(
-      id = 77,
-      value = "Cannot declare multiple disposal methods for this producer " +
-              "method.\n\nProducer method:  {0}\nDisposal methods:  {1}",
-      format = Format.MESSAGE_FORMAT)
+  @Message(id = 77,
+           value = "Cannot declare multiple disposal methods for this producer "
+                   + "method.\n\nProducer method:  {0}\nDisposal methods:  {1}",
+           format = Format.MESSAGE_FORMAT)
   DefinitionException
   multipleDisposalMethods(Object param1, Object param2);
 
   @Message(id = 78,
-           value = "Specialized producer method does not override another " +
-                   "producer method: {0}\n\tat {1}\n  StackTrace:",
+           value = "Specialized producer method does not override another "
+                   + "producer method: {0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   producerMethodNotSpecializing(Object param1, Object stackElement);
 
   @Message(id = 79,
-           value = "Could not instantiate a proxy for a session bean:  {0}\n " +
-                   " Proxy: {1}",
+           value = "Could not instantiate a proxy for a session bean:  {0}\n "
+                   + " Proxy: {1}",
            format = Format.MESSAGE_FORMAT)
   CreationException
   sessionBeanProxyInstantiationFailed(Object sessionBean, Object proxyClass,
@@ -438,22 +437,22 @@ public interface BeanLogger extends WeldLogger {
   ejbCannotBeDecorator(Object param1);
 
   @Message(id = 82,
-           value = "Scope {0} is not allowed on stateless session beans for " +
-                   "{1}. Only @Dependent is allowed.",
+           value = "Scope {0} is not allowed on stateless session beans for "
+                   + "{1}. Only @Dependent is allowed.",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   scopeNotAllowedOnStatelessSessionBean(Object param1, Object param2);
 
   @Message(id = 83,
-           value = "Scope {0} is not allowed on singleton session beans for " +
-                   "{1}. Only @Dependent and @ApplicationScoped is allowed.",
+           value = "Scope {0} is not allowed on singleton session beans for "
+                   + "{1}. Only @Dependent and @ApplicationScoped is allowed.",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   scopeNotAllowedOnSingletonBean(Object param1, Object param2);
 
   @Message(id = 84,
-           value = "Specializing enterprise bean must extend another " +
-                   "enterprise bean:  {0}",
+           value = "Specializing enterprise bean must extend another "
+                   + "enterprise bean:  {0}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   specializingEnterpriseBeanMustExtendAnEnterpriseBean(Object param1);
@@ -464,8 +463,8 @@ public interface BeanLogger extends WeldLogger {
   cannotDestroyNullBean(Object param1);
 
   @Message(id = 86,
-           value = "Cannot destroy session bean instance not created by the " +
-                   "container:  {0}",
+           value = "Cannot destroy session bean instance not created by the "
+                   + "container:  {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   cannotDestroyEnterpriseBeanNotCreated(Object param1);
@@ -477,24 +476,24 @@ public interface BeanLogger extends WeldLogger {
   messageDrivenBeansCannotBeManaged(Object param1);
 
   @Message(id = 88,
-           value = "Observer method must be static or local business method: " +
-                   " {0}\n\tat {1}\n  StackTrace:",
+           value = "Observer method must be static or local business method: "
+                   + " {0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   observerMethodMustBeStaticOrBusiness(Object param1, Object stackElement);
 
   @Message(id = 89,
-           value = "Unable to determine EJB for {0}, multiple EJBs with that " +
-                   "class:  {1}",
+           value = "Unable to determine EJB for {0}, multiple EJBs with that "
+                   + "class:  {1}",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   tooManyEjbsForClass(Object param1, Object param2);
 
-  @Message(
-      id = 90,
-      value = "A decorator has an abstract method that is not declared by " +
-              "any decorated type\n  Method: {0}\n\tat {1}\n  StackTrace:",
-      format = Format.MESSAGE_FORMAT)
+  @Message(id = 90,
+           value = "A decorator has an abstract method that is not declared by "
+                   +
+                   "any decorated type\n  Method: {0}\n\tat {1}\n  StackTrace:",
+           format = Format.MESSAGE_FORMAT)
   DefinitionException
   abstractMethodMustMatchDecoratedType(Object param1, Object param2);
 
@@ -512,24 +511,24 @@ public interface BeanLogger extends WeldLogger {
   genericSessionBeanMustBeDependent(Object param1);
 
   @Message(id = 96,
-           value = "Producer fields on session beans must be static. Field " +
-                   "{0} declared on {1}",
+           value = "Producer fields on session beans must be static. Field "
+                   + "{0} declared on {1}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   producerFieldOnSessionBeanMustBeStatic(Object param1, Object param2);
 
   @Message(id = 97,
-           value = "A producer method with a parameterized return type with " +
-                   "a type variable must be declared @Dependent scoped: \n  " +
-                   "{0}\n\tat {1}\n  StackTrace:",
+           value = "A producer method with a parameterized return type with "
+                   + "a type variable must be declared @Dependent scoped: \n  "
+                   + "{0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   producerMethodWithTypeVariableReturnTypeMustBeDependent(Object param1,
                                                           String stackElement);
 
   @Message(id = 98,
-           value = "A producer method return type may not contain a " +
-                   "wildcard: \n  {0}\n\tat {1}\n  StackTrace:",
+           value = "A producer method return type may not contain a "
+                   + "wildcard: \n  {0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   producerMethodCannotHaveAWildcardReturnType(Object param1,
@@ -548,8 +547,8 @@ public interface BeanLogger extends WeldLogger {
   proxyDeserializationFailure(Object param1);
 
   @Message(id = 1501,
-           value = "Method call requires a BeanInstance which has not been " +
-                   "set for this proxy {0}",
+           value = "Method call requires a BeanInstance which has not been "
+                   + "set for this proxy {0}",
            format = Format.MESSAGE_FORMAT)
   WeldException
   beanInstanceNotSetOnProxy(Object param1);
@@ -569,8 +568,8 @@ public interface BeanLogger extends WeldLogger {
   finalBeanClassWithInterceptorsNotAllowed(Object param1);
 
   @Message(id = 1504,
-           value = "Intercepted bean method {0} (intercepted by {1}) cannot " +
-                   "be declared final",
+           value = "Intercepted bean method {0} (intercepted by {1}) cannot "
+                   + "be declared final",
            format = Format.MESSAGE_FORMAT)
   DeploymentException
   finalInterceptedBeanMethodNotAllowed(Object param1, Object param2);
@@ -579,8 +578,8 @@ public interface BeanLogger extends WeldLogger {
   @Message(
       id = 1505,
       value =
-          "Method {0} cannot be intercepted by {1} - will be ignored by " +
-          "interceptors and should never be invoked upon the proxy instance!",
+          "Method {0} cannot be intercepted by {1} - will be ignored by "
+          + "interceptors and should never be invoked upon the proxy instance!",
       format = Format.MESSAGE_FORMAT)
   void
   finalMethodNotIntercepted(Object method, Object interceptor);
@@ -613,8 +612,8 @@ public interface BeanLogger extends WeldLogger {
   proxyHandlerSerializedForNonSerializableBean();
 
   @Message(id = 1511,
-           value = "Specializing bean {0} does not have bean type {1} of " +
-                   "specialized bean {2}",
+           value = "Specializing bean {0} does not have bean type {1} of "
+                   + "specialized bean {2}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   specializingBeanMissingSpecializedType(Object param1, Object param2,
@@ -626,16 +625,16 @@ public interface BeanLogger extends WeldLogger {
   invalidInjectionPointType(Object param1, Object param2);
 
   @Message(id = 1513,
-           value = "An implementation of AnnotatedCallable must implement " +
-                   "either AnnotatedConstructor or AnnotatedMethod, {0}",
+           value = "An implementation of AnnotatedCallable must implement "
+                   + "either AnnotatedConstructor or AnnotatedMethod, {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   invalidAnnotatedCallable(Object param1);
 
   @Message(
       id = 1514,
-      value = "An implementation of AnnotatedMember must implement either " +
-              "AnnotatedConstructor, AnnotatedMethod or AnnotatedField, {0}",
+      value = "An implementation of AnnotatedMember must implement either "
+              + "AnnotatedConstructor, AnnotatedMethod or AnnotatedField, {0}",
       format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   invalidAnnotatedMember(Object param1);
@@ -652,30 +651,30 @@ public interface BeanLogger extends WeldLogger {
   namedResourceProducerField(Object param1);
 
   @Message(id = 1517,
-           value = "The type of the resource producer field [{0}] does not " +
-                   "match the resource type {1}",
+           value = "The type of the resource producer field [{0}] does not "
+                   + "match the resource type {1}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   invalidResourceProducerType(Object param1, Object param2);
 
   @Message(id = 1518,
-           value = "Cannot create Producer implementation. Declaring bean " +
-                   "missing for a non-static member {0}",
+           value = "Cannot create Producer implementation. Declaring bean "
+                   + "missing for a non-static member {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   declaringBeanMissing(Object param1);
 
   @LogMessage(level = Level.DEBUG)
   @Message(id = 1519,
-           value = "An InjectionTarget is created for an abstract {0}. It " +
-                   "will not be possible to produce instances of this type!",
+           value = "An InjectionTarget is created for an abstract {0}. It "
+                   + "will not be possible to produce instances of this type!",
            format = Format.MESSAGE_FORMAT)
   void
   injectionTargetCreatedForAbstractClass(Object param1);
 
   @Message(id = 1520,
-           value = "Beans with different bean names {0}, {1} cannot be " +
-                   "specialized by a single bean {2}",
+           value = "Beans with different bean names {0}, {1} cannot be "
+                   + "specialized by a single bean {2}",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   beansWithDifferentBeanNamesCannotBeSpecialized(Object param1, Object param2,
@@ -684,22 +683,22 @@ public interface BeanLogger extends WeldLogger {
   @Message(
       id = 1521,
       value =
-          "InjectionPoint.getAnnotated() must return either " +
-          "AnnotatedParameter or AnnotatedField but {0} was returned for {1}",
+          "InjectionPoint.getAnnotated() must return either "
+          + "AnnotatedParameter or AnnotatedField but {0} was returned for {1}",
       format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   invalidAnnotatedOfInjectionPoint(Object param1, Object param2);
 
   @Message(id = 1522,
-           value = "Unable to restore InjectionPoint. No matching " +
-                   "InjectionPoint found on {0}",
+           value = "Unable to restore InjectionPoint. No matching "
+                   + "InjectionPoint found on {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   unableToRestoreInjectionPoint(Object param1);
 
   @Message(id = 1523,
-           value = "Unable to restore InjectionPoint. Multiple matching " +
-                   "InjectionPoints found on {0}:\n  - {1},\n  - {2}",
+           value = "Unable to restore InjectionPoint. Multiple matching "
+                   + "InjectionPoints found on {0}:\n  - {1},\n  - {2}",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   unableToRestoreInjectionPointMultiple(Object param1, Object param2,
@@ -713,15 +712,16 @@ public interface BeanLogger extends WeldLogger {
 
   @Message(
       id = 1525,
-      value = "Instance.destroy() is not supported. The underlying context " +
-              "{0} does not support destroying of contextual instances",
+      value = "Instance.destroy() is not supported. The underlying context "
+              + "{0} does not support destroying of contextual instances",
       format = Format.MESSAGE_FORMAT)
   UnsupportedOperationException
   destroyUnsupported(Object param1);
 
   @Message(
       id = 1526,
-      value = "Managed bean declaring a passivating scope has a " +
+      value = "Managed bean declaring a passivating scope has a "
+              +
               "non-passivation capable decorator.  Bean:  {0}  Decorator: {1}",
       format = Format.MESSAGE_FORMAT)
   DeploymentException
@@ -730,8 +730,8 @@ public interface BeanLogger extends WeldLogger {
 
   @Message(
       id = 1527,
-      value = "Managed bean declaring a passivating scope has a " +
-              "non-serializable interceptor.  Bean:  {0}  Interceptor: {1}",
+      value = "Managed bean declaring a passivating scope has a "
+              + "non-serializable interceptor.  Bean:  {0}  Interceptor: {1}",
       format = Format.MESSAGE_FORMAT)
   DeploymentException
   passivatingBeanHasNonPassivationCapableInterceptor(Object param1,
@@ -739,9 +739,9 @@ public interface BeanLogger extends WeldLogger {
 
   @LogMessage(level = Level.DEBUG)
   @Message(id = 1529,
-           value = "An InjectionTarget is created for a {0} which does not " +
-                   "have any appropriate constructor. It will not be " +
-                   "possible to produce instances of this type!",
+           value = "An InjectionTarget is created for a {0} which does not "
+                   + "have any appropriate constructor. It will not be "
+                   + "possible to produce instances of this type!",
            format = Format.MESSAGE_FORMAT)
   void
   injectionTargetCreatedForClassWithoutAppropriateConstructor(Object param1);
@@ -763,22 +763,22 @@ public interface BeanLogger extends WeldLogger {
   @LogMessage(level = Level.DEBUG)
   @Message(
       id = 1533,
-      value = "An InjectionTarget is created for a non-static inner {0}. It " +
-              "will not be possible to produce instances of this type!",
+      value = "An InjectionTarget is created for a non-static inner {0}. It "
+              + "will not be possible to produce instances of this type!",
       format = Format.MESSAGE_FORMAT)
   void
   injectionTargetCreatedForNonStaticInnerClass(Object param1);
 
   @Message(id = 1534,
-           value = "Bean class which has decorators must have a public " +
-                   "constructor without parameters: {0}",
+           value = "Bean class which has decorators must have a public "
+                   + "constructor without parameters: {0}",
            format = Format.MESSAGE_FORMAT)
   DeploymentException
   decoratedHasNoNoargsConstructor(Object param1);
 
   @Message(id = 1535,
-           value = "Constructor without parameters cannot be private in bean " +
-                   "class which has decorators: {0}\n\tat {1}\n  StackTrace:",
+           value = "Constructor without parameters cannot be private in bean "
+                   + "class which has decorators: {0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DeploymentException
   decoratedNoargsConstructorIsPrivate(Object param1, Object stackElement);
@@ -796,8 +796,8 @@ public interface BeanLogger extends WeldLogger {
 
   // Message version of 1529
   @Message(id = 1537,
-           value = "An InjectionTarget is created for a {0} which does not " +
-                   "have any appropriate constructor.",
+           value = "An InjectionTarget is created for a {0} which does not "
+                   + "have any appropriate constructor.",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   injectionTargetCreatedForClassWithoutAppropriateConstructorException(
@@ -883,17 +883,17 @@ public interface BeanLogger extends WeldLogger {
   unableToDetermineParentCreationalContext(Object param1);
 
   @Message(id = 1550,
-           value = "A producer field with a parameterized type with a type " +
-                   "variable must be declared @Dependent scoped: \n  " +
-                   "{0}\n\tat {1}\n  StackTrace:",
+           value = "A producer field with a parameterized type with a type "
+                   + "variable must be declared @Dependent scoped: \n  "
+                   + "{0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   producerFieldWithTypeVariableBeanTypeMustBeDependent(Object param1,
                                                        String stackElement);
 
   @Message(id = 1551,
-           value = "A producer field type may not contain a wildcard: \n  " +
-                   "{0}\n\tat {1}\n  StackTrace:",
+           value = "A producer field type may not contain a wildcard: \n  "
+                   + "{0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   producerFieldCannotHaveAWildcardBeanType(Object param1, String stackElement);
@@ -961,25 +961,26 @@ public interface BeanLogger extends WeldLogger {
   beanBuilderInvalidBeanManager(Object param1);
 
   @Message(id = 1562,
-           value = "A producer method return type may not be a type variable " +
-                   "or an array type whose component type is a type " +
-                   "variable: \n  {0}\n\tat {1}\n  StackTrace:",
+           value = "A producer method return type may not be a type variable "
+                   + "or an array type whose component type is a type "
+                   + "variable: \n  {0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   producerMethodReturnTypeInvalidTypeVariable(Object param1,
                                               String stackElement);
 
   @Message(id = 1563,
-           value = "A producer field type may not be a type variable or an " +
-                   "array type whose component type is a type variable: \n  " +
-                   "{0}\n\tat {1}\n  StackTrace:",
+           value = "A producer field type may not be a type variable or an "
+                   + "array type whose component type is a type variable: \n  "
+                   + "{0}\n\tat {1}\n  StackTrace:",
            format = Format.MESSAGE_FORMAT)
   DefinitionException
   producerFieldTypeInvalidTypeVariable(Object param1, String stackElement);
 
   @Message(
       id = 1564,
-      value = "Injection point metadata injected into a stateless session " +
+      value = "Injection point metadata injected into a stateless session "
+              +
               "bean may only be accessed within its business method invocation",
       format = Format.MESSAGE_FORMAT)
   IllegalStateException
@@ -1011,8 +1012,8 @@ public interface BeanLogger extends WeldLogger {
   unableToCreateClassFile(Object name, @Cause Throwable cause);
 
   @Message(id = 1569,
-           value = "Cannot inject injection point metadata in a non " +
-                   "@Dependent bean: {0}",
+           value = "Cannot inject injection point metadata in a non "
+                   + "@Dependent bean: {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   cannotInjectInjectionPointMetadataIntoNonDependent(Object bean);
@@ -1032,40 +1033,40 @@ public interface BeanLogger extends WeldLogger {
   generatingProxyToDefaultPackage(Object param1, Object param2, Object param3);
 
   @Message(id = 1572,
-           value = "Cannot create instance of session bean from Annotated " +
-                   "Type {0} before AfterDeploymentValidation phase.",
+           value = "Cannot create instance of session bean from Annotated "
+                   + "Type {0} before AfterDeploymentValidation phase.",
            format = Format.MESSAGE_FORMAT)
   CreationException
   initABDnotInvoked(Object bean);
 
   @Message(id = 1573,
-           value = "Cannot obtain contextual reference for {0} - producing " +
-                   "WeldInstance does not exist anymore",
+           value = "Cannot obtain contextual reference for {0} - producing "
+                   + "WeldInstance does not exist anymore",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   cannotObtainHandlerContextualReference(Object handler);
 
   @LogMessage(level = Level.WARN)
   @Message(id = 1574,
-           value = "Cannot destroy contextual instance for {0} - producing " +
-                   "WeldInstance does not exist anymore",
+           value = "Cannot destroy contextual instance for {0} - producing "
+                   + "WeldInstance does not exist anymore",
            format = Format.MESSAGE_FORMAT)
   void
   cannotDestroyHandlerContextualReference(Object handler);
 
   @Message(
       id = 1575,
-      value = "WeldInstance.select(Type subtype, Annotation... qualifiers) " +
-              "can be invoked only on an instance of WeldInstance<Object>.",
+      value = "WeldInstance.select(Type subtype, Annotation... qualifiers) "
+              + "can be invoked only on an instance of WeldInstance<Object>.",
       format = Format.MESSAGE_FORMAT)
   IllegalStateException
   selectByTypeOnlyWorksOnObject();
 
   @LogMessage(level = Level.DEBUG)
   @Message(id = 1576,
-           value = "Using {1} to instantiate a shared proxy class {0}; the " +
-                   "deployment implementation [{2}] does not match the " +
-                   "instantiator the proxy was created with",
+           value = "Using {1} to instantiate a shared proxy class {0}; the "
+                   + "deployment implementation [{2}] does not match the "
+                   + "instantiator the proxy was created with",
            format = Format.MESSAGE_FORMAT)
   void
   creatingProxyInstanceUsingDifferentInstantiator(Object proxyClass,
@@ -1075,30 +1076,31 @@ public interface BeanLogger extends WeldLogger {
   @LogMessage(level = Level.INFO)
   @Message(
       id = 1577,
-      value = "Detected private final method: {1}\non an intercepted bean: " +
-              "{0}\nWeld will ignore this method during interception.",
+      value = "Detected private final method: {1}\non an intercepted bean: "
+              + "{0}\nWeld will ignore this method during interception.",
       format = Format.MESSAGE_FORMAT)
   void
   privateFinalMethodOnInterceptedBean(Object beanClass, Object method);
 
   @Message(id = 1578,
-           value = "WeldDefaultProxyServices failed to load/define a class " +
-                   "with name {0} whose original class was {1} because all " +
-                   "attempts to determine a class loader ended with null.",
+           value = "WeldDefaultProxyServices failed to load/define a class "
+                   + "with name {0} whose original class was {1} because all "
+                   + "attempts to determine a class loader ended with null.",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   cannotDetermineClassLoader(Object beanName, Object originalClass);
 
   @Message(
       id = 1579,
-      value = "An instance of ProxyFactory.ProxyNameHolder has to contain a " +
-              "class name. This instance was created for bean class: {1}",
+      value = "An instance of ProxyFactory.ProxyNameHolder has to contain a "
+              + "class name. This instance was created for bean class: {1}",
       format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   tryingToCreateProxyNameHolderWithoutClassName(Object bean);
 
   @Message(id = 1580,
-           value = "Cannot obtain contextual reference for {0} - a " +
+           value = "Cannot obtain contextual reference for {0} - a "
+                   +
                    "previously obtained reference has already been destroyed.",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException

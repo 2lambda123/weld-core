@@ -71,9 +71,8 @@ public class CreateAnnotatedTypeWithIdTest {
         return ((SimpleClassLoader)loader)
             .publicDefineClass(name, b, off, len, protectionDomain);
       } else {
-        throw new RuntimeException("ClassLoader needs to be an instance of " +
-                                   "SimpleClassLoader but was: " +
-                                   loader);
+        throw new RuntimeException("ClassLoader needs to be an instance of "
+                                   + "SimpleClassLoader but was: " + loader);
       }
     };
     // Create a different class with the same name

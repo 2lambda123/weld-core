@@ -48,8 +48,8 @@ public interface CommonLogger extends WeldEnvironmentLogger {
 
   @LogMessage(level = Level.WARN)
   @Message(id = 4,
-           value = "Could not invoke JNLPClassLoader#getJarFile(URL) on " +
-                   "context class loader, expecting Web Start class loader",
+           value = "Could not invoke JNLPClassLoader#getJarFile(URL) on "
+                   + "context class loader, expecting Web Start class loader",
            format = Format.MESSAGE_FORMAT)
   void
   unexpectedClassLoader(@Cause Throwable cause);
@@ -62,8 +62,8 @@ public interface CommonLogger extends WeldEnvironmentLogger {
 
   @LogMessage(level = Level.WARN)
   @Message(id = 6,
-           value = "Could not invoke JNLPClassLoader#getJarFile(URL) on " +
-                   "context class loader",
+           value = "Could not invoke JNLPClassLoader#getJarFile(URL) on "
+                   + "context class loader",
            format = Format.MESSAGE_FORMAT)
   void
   jnlpClassLoaderInvocationException(@Cause Throwable cause);
@@ -78,16 +78,16 @@ public interface CommonLogger extends WeldEnvironmentLogger {
 
   @LogMessage(level = Level.WARN)
   @Message(id = 10,
-           value = "Could not open the stream on the url {0} when adding to " +
-                   "the jandex index.",
+           value = "Could not open the stream on the url {0} when adding to "
+                   + "the jandex index.",
            format = Format.MESSAGE_FORMAT)
   void
   couldNotOpenStreamForURL(Object param1, @Cause Throwable cause);
 
   @LogMessage(level = Level.WARN)
   @Message(id = 11,
-           value = "Could not close the stream on the url {0} when adding to " +
-                   "the jandex index.",
+           value = "Could not close the stream on the url {0} when adding to "
+                   + "the jandex index.",
            format = Format.MESSAGE_FORMAT)
   void
   couldNotCloseStreamForURL(Object param1, @Cause Throwable cause);
@@ -106,9 +106,9 @@ public interface CommonLogger extends WeldEnvironmentLogger {
 
   @LogMessage(level = Level.INFO)
   @Message(id = 14,
-           value = "Falling back to Java Reflection for " +
-                   "bean-discovery-mode=\"annotated\" discovery. Add " +
-                   "org.jboss:jandex to the classpath to speed-up startup.",
+           value = "Falling back to Java Reflection for "
+                   + "bean-discovery-mode=\"annotated\" discovery. Add "
+                   + "org.jboss:jandex to the classpath to speed-up startup.",
            format = Format.MESSAGE_FORMAT)
   void
   reflectionFallback();
@@ -155,8 +155,8 @@ public interface CommonLogger extends WeldEnvironmentLogger {
 
   @LogMessage(level = Level.DEBUG)
   @Message(id = 24,
-           value = "Archive isolation enabled - creating multiple isolated " +
-                   "bean archives if needed",
+           value = "Archive isolation enabled - creating multiple isolated "
+                   + "bean archives if needed",
            format = Format.MESSAGE_FORMAT)
   void
   archiveIsolationEnabled();
@@ -190,8 +190,8 @@ public interface CommonLogger extends WeldEnvironmentLogger {
 
   @LogMessage(level = Level.WARN)
   @Message(id = 31,
-           value = "The bean archive reference {0} cannot be handled by any " +
-                   "BeanArchiveHandler: {1}",
+           value = "The bean archive reference {0} cannot be handled by any "
+                   + "BeanArchiveHandler: {1}",
            format = Format.MESSAGE_FORMAT)
   void
   beanArchiveReferenceCannotBeHandled(Object beanArchiveRef, Object handlers);
@@ -203,8 +203,8 @@ public interface CommonLogger extends WeldEnvironmentLogger {
   processingBeanArchiveReference(Object beanArchiveRef);
 
   @Message(id = 33,
-           value = "Invalid bean archive scanning result - found multiple " +
-                   "results with the same reference: {0}",
+           value = "Invalid bean archive scanning result - found multiple "
+                   + "results with the same reference: {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   invalidScanningResult(Object beanArchiveRef);
@@ -231,8 +231,8 @@ public interface CommonLogger extends WeldEnvironmentLogger {
   unableToInitializeProbeComponent(Object component, @Cause Throwable cause);
 
   @Message(id = 38,
-           value = "Development mode is enabled but the following Probe " +
-                   "component is not found on the classpath: {0}",
+           value = "Development mode is enabled but the following Probe "
+                   + "component is not found on the classpath: {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   probeComponentNotFoundOnClasspath(Object component);

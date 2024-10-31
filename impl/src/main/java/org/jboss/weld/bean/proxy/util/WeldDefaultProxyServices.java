@@ -74,8 +74,8 @@ public class WeldDefaultProxyServices implements ProxyServices {
 
   public ClassLoader getClassLoader(final Class<?> proxiedBeanType) {
     throw new UnsupportedOperationException(
-        "WeldDefaultProxyServices.getClassLoader(Class<?>) is not " +
-        "implemented.");
+        "WeldDefaultProxyServices.getClassLoader(Class<?>) is not "
+        + "implemented.");
   }
 
   public Class<?> loadBeanClass(final String className) {

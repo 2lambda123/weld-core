@@ -124,8 +124,8 @@ public class WeldInstanceTest {
     // try to invoke Handle.get() again; this should throw an exception
     try {
       alphaHandle.get();
-      fail("Invoking Handle.get() after destroying contextual instance " +
-           "should throw an exception.");
+      fail("Invoking Handle.get() after destroying contextual instance "
+           + "should throw an exception.");
     } catch (IllegalStateException e) {
       // expected
     }
