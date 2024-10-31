@@ -62,7 +62,7 @@
             <classifier>jdk15</classifier>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- spotbugs dependency -->
         <dependency>
             <groupId>com.github.spotbugs</groupId>
@@ -70,7 +70,7 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-    
+
     <profiles>
         <profile>
             <id>findbugs</id>

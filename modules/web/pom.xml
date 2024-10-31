@@ -71,7 +71,7 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
         <!-- spotbugs dependency -->
         <dependency>
             <groupId>com.github.spotbugs</groupId>
