@@ -52,9 +52,9 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Level.INFO)
   @Message(id = 101,
-           value = "Transactional services not available. Injection of " +
-                   "@Inject UserTransaction not available. Transactional " +
-                   "observers will be invoked synchronously.")
+           value = "Transactional services not available. Injection of "
+                   + "@Inject UserTransaction not available. Transactional "
+                   + "observers will be invoked synchronously.")
   void
   jtaUnavailable();
 
@@ -95,8 +95,8 @@ public interface BootstrapLogger extends WeldLogger {
   foundObserverMethod(Object param1);
 
   @Message(id = 110,
-           value = "Cannot set the annotation type to null (if you want to " +
-                   "stop the type being used, call veto()):  {0}",
+           value = "Cannot set the annotation type to null (if you want to "
+                   + "stop the type being used, call veto()):  {0}",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   annotationTypeNull(Object param1);
@@ -138,9 +138,9 @@ public interface BootstrapLogger extends WeldLogger {
   @LogMessage(level = Level.INFO)
   @Message(
       id = 119,
-      value = "Not generating any bean definitions from {0} because of " +
-              "underlying class loading error: Type {1} not found.  If this " +
-              "is unexpected, enable DEBUG logging to see the full error.",
+      value = "Not generating any bean definitions from {0} because of "
+              + "underlying class loading error: Type {1} not found.  If this "
+              + "is unexpected, enable DEBUG logging to see the full error.",
       format = Format.MESSAGE_FORMAT)
   void
   ignoringClassDueToLoadingError(Object param1, Object param2);
@@ -207,8 +207,8 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Level.WARN)
   @Message(id = 135,
-           value = "Legacy deployment metadata provided by the integrator. " +
-                   "Certain functionality will not be available.")
+           value = "Legacy deployment metadata provided by the integrator. "
+                   + "Certain functionality will not be available.")
   void
   legacyDeploymentMetadataProvided();
 
@@ -232,9 +232,9 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Logger.Level.WARN)
   @Message(id = 139,
-           value = "Ignoring portable extension class {0} because of " +
-                   "underlying class loading error: Type {1} not found. " +
-                   "Enable DEBUG logging level to see the full error.",
+           value = "Ignoring portable extension class {0} because of "
+                   + "underlying class loading error: Type {1} not found. "
+                   + "Enable DEBUG logging level to see the full error.",
            format = Format.MESSAGE_FORMAT)
   void
   ignoringExtensionClassDueToLoadingError(String className,
@@ -243,7 +243,8 @@ public interface BootstrapLogger extends WeldLogger {
   @Message(
       id = 140,
       value =
-          "Calling Bootstrap method after container has already been " +
+          "Calling Bootstrap method after container has already been "
+          +
           "initialized. For correct order, see CDI11Bootstrap's documentation.")
   IllegalStateException
   callingBootstrapMethodAfterContainerHasBeenInitialized();
@@ -257,11 +258,10 @@ public interface BootstrapLogger extends WeldLogger {
   notUsingFastResolver(ObserverMethod<?> observer);
 
   @LogMessage(level = Logger.Level.DEBUG)
-  @Message(
-      id = 142,
-      value = "Exception loading annotated type using ClassFileServices. " +
-              "Falling back to the default implementation. {0}",
-      format = Format.MESSAGE_FORMAT)
+  @Message(id = 142,
+           value = "Exception loading annotated type using ClassFileServices. "
+                   + "Falling back to the default implementation. {0}",
+           format = Format.MESSAGE_FORMAT)
   void
   exceptionLoadingAnnotatedType(String message);
 
@@ -286,14 +286,15 @@ public interface BootstrapLogger extends WeldLogger {
   void
   patFastResolver(SlimAnnotatedType<?> type);
 
-  @Message(id = 143, value = "Container lifecycle event method invoked " +
+  @Message(id = 143, value = "Container lifecycle event method invoked "
+                             +
                              "outside of extension observer method invocation.")
   IllegalStateException
   containerLifecycleEventMethodInvokedOutsideObserver();
 
   @Message(id = 144,
-           value = "CDI API version mismatch. CDI 1.0 API detected on " +
-                   "classpath. Weld requires version 1.1 or better.")
+           value = "CDI API version mismatch. CDI 1.0 API detected on "
+                   + "classpath. Weld requires version 1.1 or better.")
   IllegalStateException
   cdiApiVersionMismatch();
 
@@ -305,48 +306,48 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Level.WARN)
   @Message(id = 146,
-           value = "BeforeBeanDiscovery.addAnnotatedType(AnnotatedType<?>) " +
-                   "used for {0} is deprecated from CDI 1.1!",
+           value = "BeforeBeanDiscovery.addAnnotatedType(AnnotatedType<?>) "
+                   + "used for {0} is deprecated from CDI 1.1!",
            format = Format.MESSAGE_FORMAT)
   void
   deprecatedAddAnnotatedTypeMethodUsed(Class<?> clazz);
 
   @LogMessage(level = Level.WARN)
   @Message(id = 147,
-           value = "Decorator {0} declares inappropriate constructor " +
-                   "therefore will not available as a managed bean!",
+           value = "Decorator {0} declares inappropriate constructor "
+                   + "therefore will not available as a managed bean!",
            format = Format.MESSAGE_FORMAT)
   void
   decoratorWithNonCdiConstructor(String clazzName);
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 148,
-           value = "ProcessAnnotatedType.setAnnotatedType() called by {0}: " +
-                   "{1} replaced by {2}",
+           value = "ProcessAnnotatedType.setAnnotatedType() called by {0}: "
+                   + "{1} replaced by {2}",
            format = Format.MESSAGE_FORMAT)
   void
   setAnnotatedTypeCalled(Object extensionName, Object original, Object newer);
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 149,
-           value = "ProcessBeanAttributes.setBeanAttributes() called by {0}: " +
-                   "{1} replaced by {2}",
+           value = "ProcessBeanAttributes.setBeanAttributes() called by {0}: "
+                   + "{1} replaced by {2}",
            format = Format.MESSAGE_FORMAT)
   void
   setBeanAttributesCalled(Object extensionName, Object original, Object newer);
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 150,
-           value = "ProcessInjectionPoint.setInjectionPoint() called by {0}: " +
-                   "{1} replaced by {2}",
+           value = "ProcessInjectionPoint.setInjectionPoint() called by {0}: "
+                   + "{1} replaced by {2}",
            format = Format.MESSAGE_FORMAT)
   void
   setInjectionPointCalled(Object extensionName, Object original, Object newer);
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 151,
-           value = "ProcessInjectionTarget.setInjectionTarget() called by " +
-                   "{0}: {1} replaced by {2}",
+           value = "ProcessInjectionTarget.setInjectionTarget() called by "
+                   + "{0}: {1} replaced by {2}",
            format = Format.MESSAGE_FORMAT)
   void
   setInjectionTargetCalled(Object extensionName, Object original, Object newer);
@@ -421,8 +422,8 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 161,
-           value = "BeforeBeanDiscovery.addInterceptorBindingCalled() called " +
-                   "by {0} for {1}",
+           value = "BeforeBeanDiscovery.addInterceptorBindingCalled() called "
+                   + "by {0} for {1}",
            format = Format.MESSAGE_FORMAT)
   void
   addInterceptorBindingCalled(Object extensionName, Object type);
@@ -465,7 +466,8 @@ public interface BootstrapLogger extends WeldLogger {
   @LogMessage(level = Level.WARN)
   @Message(
       id = 167,
-      value = "Class {0} is annotated with @{1} but it does not declare an " +
+      value = "Class {0} is annotated with @{1} but it does not declare an "
+              +
               "appropriate constructor therefore is not registered as a bean!",
       format = Format.MESSAGE_FORMAT)
   void
@@ -480,16 +482,16 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Level.INFO)
   @Message(id = 169,
-           value = "Jandex cannot distinguish inner and static nested " +
-                   "classes! Update Jandex to 2.0.3.Final version or newer " +
-                   "to improve scanning performance.",
+           value = "Jandex cannot distinguish inner and static nested "
+                   + "classes! Update Jandex to 2.0.3.Final version or newer "
+                   + "to improve scanning performance.",
            format = Format.MESSAGE_FORMAT)
   void
   usingOldJandexVersion();
 
   @Message(id = 170,
-           value = "{0} observer cannot call both the configurator and set " +
-                   "methods. Extension {1} \nStackTrace:",
+           value = "{0} observer cannot call both the configurator and set "
+                   + "methods. Extension {1} \nStackTrace:",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   configuratorAndSetMethodBothCalled(Object observerName, Object extension);
@@ -504,8 +506,8 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 172,
-           value = "BeforeBeanDiscovery.configureInterceptorBinding() called " +
-                   "by {0} for {1}",
+           value = "BeforeBeanDiscovery.configureInterceptorBinding() called "
+                   + "by {0} for {1}",
            format = Format.MESSAGE_FORMAT)
   void
   configureInterceptorBindingCalled(Object extensionName, Object type);
@@ -519,8 +521,8 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 174,
-           value = "ProcessBeanAttributes.configureBeanAttributes() called " +
-                   "by {0} for {1}",
+           value = "ProcessBeanAttributes.configureBeanAttributes() called "
+                   + "by {0} for {1}",
            format = Format.MESSAGE_FORMAT)
   void
   configureBeanAttributesCalled(Object extensionName, Object bean);
@@ -545,16 +547,16 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 177,
-           value = "ProcessObserverMethod.configureObserverMethod() called " +
-                   "by {0} for {1}",
+           value = "ProcessObserverMethod.configureObserverMethod() called "
+                   + "by {0} for {1}",
            format = Format.MESSAGE_FORMAT)
   void
   configureObserverMethodCalled(Object extensionName, Object bean);
 
   @LogMessage(level = Logger.Level.DEBUG)
   @Message(id = 178,
-           value = "ProcessInjectionPoint.configureInjectionPoint() called " +
-                   "by {0} for {1}",
+           value = "ProcessInjectionPoint.configureInjectionPoint() called "
+                   + "by {0} for {1}",
            format = Format.MESSAGE_FORMAT)
   void
   configureInjectionPointCalled(Object extensionName, Object bean);
@@ -573,18 +575,18 @@ public interface BootstrapLogger extends WeldLogger {
 
   @LogMessage(level = Logger.Level.WARN)
   @Message(id = 181,
-           value = "org.jboss.weld.executor.threadPoolType=COMMON detected " +
-                   "but ForkJoinPool.commonPool() does not work with " +
-                   "SecurityManager enabled, switching to {0} thread pool",
+           value = "org.jboss.weld.executor.threadPoolType=COMMON detected "
+                   + "but ForkJoinPool.commonPool() does not work with "
+                   + "SecurityManager enabled, switching to {0} thread pool",
            format = Format.MESSAGE_FORMAT)
   void
   commonThreadPoolWithSecurityManagerEnabled(Object threadPoolType);
 
   @Message(id = 182,
-           value = "Provided implementation of " +
-                   "org.jboss.weld.serialization.spi.ProxyServices ({0}) " +
-                   "does not support class defining. This functionality is " +
-                   "required in order to be able to define proxy classes.",
+           value = "Provided implementation of "
+                   + "org.jboss.weld.serialization.spi.ProxyServices ({0}) "
+                   + "does not support class defining. This functionality is "
+                   + "required in order to be able to define proxy classes.",
            format = Format.MESSAGE_FORMAT)
   IllegalStateException
   proxyServicesWithoutClassDefining(Object services);

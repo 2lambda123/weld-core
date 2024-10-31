@@ -69,8 +69,8 @@ public interface ServletLogger extends WeldLogger {
   @SuppressWarnings("weldlog:method-interface")
   @LogMessage(level = Level.WARN)
   @Message(id = 711,
-           value = "Context activation pattern {0} ignored as it is " +
-                   "overriden by the integrator.",
+           value = "Context activation pattern {0} ignored as it is "
+                   + "overriden by the integrator.",
            format = Format.MESSAGE_FORMAT)
   void
   webXmlMappingPatternIgnored(String pattern);
@@ -96,8 +96,8 @@ public interface ServletLogger extends WeldLogger {
   @SuppressWarnings("weldlog:method-interface")
   @LogMessage(level = Level.WARN)
   @Message(id = 714,
-           value = "HttpContextLifecycle guard leak detected. The Servlet " +
-                   "container is not fully compliant. The value was {0}",
+           value = "HttpContextLifecycle guard leak detected. The Servlet "
+                   + "container is not fully compliant. The value was {0}",
            format = Format.MESSAGE_FORMAT)
   void
   guardLeak(int value);
@@ -105,16 +105,16 @@ public interface ServletLogger extends WeldLogger {
   @SuppressWarnings("weldlog:method-interface")
   @LogMessage(level = Level.WARN)
   @Message(id = 715,
-           value = "HttpContextLifecycle guard not set. The Servlet " +
-                   "container is not fully compliant.",
+           value = "HttpContextLifecycle guard not set. The Servlet "
+                   + "container is not fully compliant.",
            format = Format.MESSAGE_FORMAT)
   void
   guardNotSet();
 
   @SuppressWarnings("weldlog:method-interface")
   @LogMessage(level = Level.INFO)
-  @Message(id = 716, value = "Running in Servlet 2.x environment. " +
-                             "Asynchronous request support is disabled.")
+  @Message(id = 716, value = "Running in Servlet 2.x environment. "
+                             + "Asynchronous request support is disabled.")
   void
   servlet2Environment();
 
@@ -130,18 +130,18 @@ public interface ServletLogger extends WeldLogger {
   @SuppressWarnings("weldlog:method-interface")
   @LogMessage(level = Level.WARN)
   @Message(id = 718,
-           value = "No EEModuleDescriptor defined for bean archive with ID: " +
-                   "{0}. @Initialized and @Destroyed events for " +
-                   "ApplicationScoped may be fired twice.",
+           value = "No EEModuleDescriptor defined for bean archive with ID: "
+                   + "{0}. @Initialized and @Destroyed events for "
+                   + "ApplicationScoped may be fired twice.",
            format = Format.MESSAGE_FORMAT)
   void
   noEeModuleDescriptor(Object beanArchiveId);
 
   @LogMessage(level = Level.DEBUG)
   @Message(id = 719,
-           value = "An active HttpSessionDestructionContext detected. This " +
-                   "is likely a leftover from previous sessions that ended " +
-                   "exceptionally. This context will be terminated.",
+           value = "An active HttpSessionDestructionContext detected. This "
+                   + "is likely a leftover from previous sessions that ended "
+                   + "exceptionally. This context will be terminated.",
            format = Format.MESSAGE_FORMAT)
   void
   destructionContextLeak();

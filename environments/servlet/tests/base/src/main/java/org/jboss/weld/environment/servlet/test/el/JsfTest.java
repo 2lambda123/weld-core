@@ -52,8 +52,8 @@ public class JsfTest {
        + "version=\"2.0\"> "
        + "<jsp:output doctype-root-element=\"html\" "
        + "doctype-public=\"-//W3C//DTD XHTML 1.0 Transitional//EN\" "
-       + "doctype-system=\"http://www.w3c.org/TR/xhtml1/DTD/" +
-         "xhtml1-transitional.dtd\"/> "
+       + "doctype-system=\"http://www.w3c.org/TR/xhtml1/DTD/"
+       + "xhtml1-transitional.dtd\"/> "
        + "<jsp:directive.page contentType=\"text/html\"/> "
        + "<html> "
        + "<head /> "

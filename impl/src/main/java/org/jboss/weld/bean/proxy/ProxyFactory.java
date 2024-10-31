@@ -244,8 +244,8 @@ public class ProxyFactory<T> implements PrivilegedAction<T> {
       Class<?> superInterface = typeInfo.getSuperInterface();
       if (superInterface == null) {
         throw new IllegalArgumentException(
-            "Proxied bean type cannot be java.lang.Object without an " +
-            "interface");
+            "Proxied bean type cannot be java.lang.Object without an "
+            + "interface");
       } else {
         String reason = getDefaultPackageReason(superInterface);
         if (reason != null) {
@@ -379,8 +379,8 @@ public class ProxyFactory<T> implements PrivilegedAction<T> {
    */
   public void addInterface(Class<?> newInterface) {
     if (!newInterface.isInterface()) {
-      throw new IllegalArgumentException(newInterface + (" is not an " +
-                                                         "interface"));
+      throw new IllegalArgumentException(newInterface + (" is not an "
+                                                         + "interface"));
     }
     additionalInterfaces.add(newInterface);
   }

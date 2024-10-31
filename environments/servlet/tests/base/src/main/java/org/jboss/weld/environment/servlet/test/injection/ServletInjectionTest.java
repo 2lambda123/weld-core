@@ -43,9 +43,9 @@ public class ServletInjectionTest {
       extendDefaultWebXml(
           "<servlet><servlet-name>Rat Servlet</servlet-name><servlet-class>" +
           RatServlet.class.getName() +
-          ("</servlet-class></servlet> <servlet-mapping><servlet-name>Rat " +
-           "Servlet</servlet-name><url-pattern>/rat</url-pattern></" +
-           "servlet-mapping>"))
+          ("</servlet-class></servlet> <servlet-mapping><servlet-name>Rat "
+           + "Servlet</servlet-name><url-pattern>/rat</url-pattern></"
+           + "servlet-mapping>"))
           .getBytes());
 
   @Deployment

@@ -43,15 +43,15 @@ public class FilterInjectionTest {
       extendDefaultWebXml(
           "<filter><filter-name>Cat Filter</filter-name><filter-class>" +
           CatFilter.class.getName() +
-          ("</filter-class></filter><filter-mapping><filter-name>Cat " +
-           "Filter</filter-name><url-pattern>/cat</url-pattern></" +
-           "filter-mapping> <servlet><servlet-name>Wolverine " +
-           "Servlet</servlet-name><servlet-class>") +
+          ("</filter-class></filter><filter-mapping><filter-name>Cat "
+           + "Filter</filter-name><url-pattern>/cat</url-pattern></"
+           + "filter-mapping> <servlet><servlet-name>Wolverine "
+           + "Servlet</servlet-name><servlet-class>") +
           WolverineServlet.class.getName() +
-          ("</servlet-class></servlet> " +
-           "<servlet-mapping><servlet-name>Wolverine " +
-           "Servlet</servlet-name><url-pattern>/</url-pattern></" +
-           "servlet-mapping>"))
+          ("</servlet-class></servlet> "
+           + "<servlet-mapping><servlet-name>Wolverine "
+           + "Servlet</servlet-name><url-pattern>/</url-pattern></"
+           + "servlet-mapping>"))
           .getBytes());
 
   @Deployment

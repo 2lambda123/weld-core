@@ -64,8 +64,8 @@ public interface WeldSELogger extends WeldEnvironmentLogger {
 
   @LogMessage(level = Level.INFO)
   @Message(id = 2006,
-           value = "Multiple containers running - CDI.current() may not work " +
-                   "properly: {0}",
+           value = "Multiple containers running - CDI.current() may not work "
+                   + "properly: {0}",
            format = Format.MESSAGE_FORMAT)
   void
   multipleContainersRunning(Object ids);
@@ -78,8 +78,8 @@ public interface WeldSELogger extends WeldEnvironmentLogger {
 
   @LogMessage(level = Level.WARN)
   @Message(id = 2008,
-           value = "Bean class {0} found in multiple bean archives - this " +
-                   "may result in incorrect behavior: {1}",
+           value = "Bean class {0} found in multiple bean archives - this "
+                   + "may result in incorrect behavior: {1}",
            format = Format.MESSAGE_FORMAT)
   void
   beanClassDeployedInMultipleBeanArchives(Object beanClass, Object bdas);
@@ -99,8 +99,8 @@ public interface WeldSELogger extends WeldEnvironmentLogger {
   observedTypeNotContonainerLifecycleEventType(Object type);
 
   @Message(id = 2011,
-           value = "The observed type {0} does not match the container " +
-                   "lifecycle event type {1}",
+           value = "The observed type {0} does not match the container "
+                   + "lifecycle event type {1}",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   observedTypeDoesNotMatchContonainerLifecycleEventType(Object type,
@@ -118,31 +118,32 @@ public interface WeldSELogger extends WeldEnvironmentLogger {
 
   @Message(
       id = 2014,
-      value = "Weld SE container with id {0} has not yet validated the " +
-              "deployment - methods for programmatic lookup cannot be used",
+      value = "Weld SE container with id {0} has not yet validated the "
+              + "deployment - methods for programmatic lookup cannot be used",
       format = Format.MESSAGE_FORMAT)
   IllegalStateException
   weldContainerDeploymentNotValidated(Object id);
 
   @Message(id = 2015,
-           value = "Bean discovery mode NONE is not a valid option for Weld " +
-                   "SE deployment archive - Weld SE container with id {0}.",
+           value = "Bean discovery mode NONE is not a valid option for Weld "
+                   + "SE deployment archive - Weld SE container with id {0}.",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   beanArchiveWithModeNone(Object id);
 
   @Message(
       id = 2016,
-      value = "Zero or more than one container is running - " +
+      value = "Zero or more than one container is running - "
+              +
               "WeldContainer.current() cannot determine the current container.",
       format = Format.MESSAGE_FORMAT)
   IllegalStateException
   zeroOrMoreThanOneContainerRunning();
 
   @Message(id = 2017,
-           value = "Unexpected value for parameter " +
-                   "'org.jboss.weld.se.additionalBeanDefiningAnnotations'. " +
-                   "Expected java.util.Collection but found {0}. ",
+           value = "Unexpected value for parameter "
+                   + "'org.jboss.weld.se.additionalBeanDefiningAnnotations'. "
+                   + "Expected java.util.Collection but found {0}. ",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   unexpectedValueForAdditionalBeanDefiningAnnotations(Class clazz);
@@ -150,17 +151,17 @@ public interface WeldSELogger extends WeldEnvironmentLogger {
   @LogMessage(level = Level.WARN)
   @Message(
       id = 2018,
-      value = "Skipping registration of additional bean defining annotation " +
-              "via `org.jboss.weld.se.additionalBeanDefiningAnnotations`. "
-              + "Only values of type Class<? extends Annotation> are valid. " +
-                "Found: {0}",
+      value = "Skipping registration of additional bean defining annotation "
+              + "via `org.jboss.weld.se.additionalBeanDefiningAnnotations`. "
+              + "Only values of type Class<? extends Annotation> are valid. "
+              + "Found: {0}",
       format = Format.MESSAGE_FORMAT)
   void
   unexpectedItemsInValueCollection(Class clazz);
 
   @Message(id = 2019,
-           value = "Failed to parse the following string as additional bean " +
-                   "defining annotation: {0}. The exception was: {1}",
+           value = "Failed to parse the following string as additional bean "
+                   + "defining annotation: {0}. The exception was: {1}",
            format = Format.MESSAGE_FORMAT)
   IllegalArgumentException
   failedToLoadClass(String className, String exception);
