@@ -20,5 +20,4 @@ package org.jboss.weld.environment.se.test.bootstrap;
 import javax.enterprise.context.Dependent;
 
 @Dependent
-public class DummyBean {
-}
+public class DummyBean {}

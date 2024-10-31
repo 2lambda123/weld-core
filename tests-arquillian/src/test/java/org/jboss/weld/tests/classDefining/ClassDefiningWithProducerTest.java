@@ -17,6 +17,7 @@
 
 package org.jboss.weld.tests.classDefining;
 
+import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -30,31 +31,31 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-
 /**
- * Tests that we are able to define a proxy class for producer method that returns a type from different package.
- * In JDK 11+ this means we need to perform lookup in correct module.
+ * Tests that we are able to define a proxy class for producer method that
+ * returns a type from different package. In JDK 11+ this means we need to
+ * perform lookup in correct module.
  */
 @RunWith(Arquillian.class)
 public class ClassDefiningWithProducerTest {
 
-    @Deployment
-    public static Archive<?> deploy() {
-        return ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(ClassDefiningWithProducerTest.class))
-                .addClass(ClassDefiningWithProducerTest.class)
-                .addClass(BeanWithProducer.class)
-                .addClass(BeanInterface.class)
-                .addClass(AppScopedBean.class);
-    }
+  @Deployment
+  public static Archive<?> deploy() {
+    return ShrinkWrap
+        .create(BeanArchive.class, Utils.getDeploymentNameAsHash(
+                                       ClassDefiningWithProducerTest.class))
+        .addClass(ClassDefiningWithProducerTest.class)
+        .addClass(BeanWithProducer.class)
+        .addClass(BeanInterface.class)
+        .addClass(AppScopedBean.class);
+  }
 
-    @Inject
-    BeanWithProducer bean;
+  @Inject BeanWithProducer bean;
 
-    @Test
-    public void testProxyDefinitionWorks() {
-        // invoke the method
-        Assert.assertEquals(666, bean.ping());
-        Assert.assertEquals(666, bean.pingNested());
-    }
+  @Test
+  public void testProxyDefinitionWorks() {
+    // invoke the method
+    Assert.assertEquals(666, bean.ping());
+    Assert.assertEquals(666, bean.pingNested());
+  }
 }

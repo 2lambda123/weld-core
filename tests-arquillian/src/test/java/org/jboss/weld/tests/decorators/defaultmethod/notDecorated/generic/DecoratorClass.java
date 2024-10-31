@@ -24,12 +24,10 @@ import javax.inject.Inject;
 @Decorator
 public class DecoratorClass implements GenericInterfaceWithDefaultMethod {
 
-    @Inject
-    @Delegate
-    GenericInterfaceWithDefaultMethod delegate;
+  @Inject @Delegate GenericInterfaceWithDefaultMethod delegate;
 
-    @Override
-    public String ping() {
-        return DecoratorClass.class.getSimpleName() + delegate.ping();
-    }
+  @Override
+  public String ping() {
+    return DecoratorClass.class.getSimpleName() + delegate.ping();
+  }
 }

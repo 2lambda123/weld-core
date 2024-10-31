@@ -18,5 +18,5 @@
 package org.jboss.weld.tests.decorators.defaultmethod.notDecorated;
 
 public interface PlainInterface {
-    String defaultPing();
+  String defaultPing();
 }

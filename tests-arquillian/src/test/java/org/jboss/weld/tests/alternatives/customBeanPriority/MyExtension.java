@@ -23,7 +23,6 @@ import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessSyntheticBean;
-
 import org.jboss.weld.bootstrap.event.WeldAfterBeanDiscovery;
 
 /**
@@ -32,21 +31,22 @@ import org.jboss.weld.bootstrap.event.WeldAfterBeanDiscovery;
  */
 public class MyExtension implements Extension {
 
-    public static int PSB_OBSERVED = 0;
+  public static int PSB_OBSERVED = 0;
 
-    public void observe(@Observes WeldAfterBeanDiscovery abd, BeanManager bm) {
-        // register an alternative bean via configurator with priority
-        abd.addBean()
-            .beanClass(FooAlternative.class)
-            .types(Object.class, FooAlternative.class, PlainFoo.class)
-            .createWith((ctx) -> new FooAlternative())
-            .alternative(true)
-            .priority(100)
-            .qualifiers(Any.Literal.INSTANCE, Default.Literal.INSTANCE)
-            .scope(Dependent.class);
-    }
+  public void observe(@Observes WeldAfterBeanDiscovery abd, BeanManager bm) {
+    // register an alternative bean via configurator with priority
+    abd.addBean()
+        .beanClass(FooAlternative.class)
+        .types(Object.class, FooAlternative.class, PlainFoo.class)
+        .createWith((ctx) -> new FooAlternative())
+        .alternative(true)
+        .priority(100)
+        .qualifiers(Any.Literal.INSTANCE, Default.Literal.INSTANCE)
+        .scope(Dependent.class);
+  }
 
-    public void observeProcessBean(@Observes ProcessSyntheticBean<FooAlternative> psb) {
-        PSB_OBSERVED++;
-    }
+  public void
+  observeProcessBean(@Observes ProcessSyntheticBean<FooAlternative> psb) {
+    PSB_OBSERVED++;
+  }
 }

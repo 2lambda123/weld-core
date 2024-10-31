@@ -22,9 +22,7 @@ import static org.jboss.weld.environment.servlet.test.util.Deployments.toListene
 import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -42,40 +40,55 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ListenerInjectionTest {
 
-    @Deployment
-    public static WebArchive createTestArchive() {
-        StringBuilder listeners = new StringBuilder();
-        listeners.append(toListener(BatRequestListener.class.getName()));
-        listeners.append(toListener(BatSessionListener.class.getName()));
-        listeners.append(toListener(BatServletContextListener.class.getName()));
-        Asset webXml = new ByteArrayAsset(
-                extendDefaultWebXml(
-                        listeners.toString()
-                                + "<servlet><servlet-name>Bat Servlet</servlet-name><servlet-class>"
-                                + BatServlet.class.getName()
-                                + "</servlet-class></servlet> <servlet-mapping><servlet-name>Bat Servlet</servlet-name><url-pattern>/bat</url-pattern></servlet-mapping>")
-                        .getBytes());
-        return baseDeployment(webXml).addClasses(BatRequestListener.class, BatSessionListener.class, BatServletContextListener.class, BatListener.class, BatServlet.class, Sewer.class);
-    }
+  @Deployment
+  public static WebArchive createTestArchive() {
+    StringBuilder listeners = new StringBuilder();
+    listeners.append(toListener(BatRequestListener.class.getName()));
+    listeners.append(toListener(BatSessionListener.class.getName()));
+    listeners.append(toListener(BatServletContextListener.class.getName()));
+    Asset webXml = new ByteArrayAsset(
+        extendDefaultWebXml(
+            listeners.toString() +
+            ("<servlet><servlet-name>Bat " +
+             "Servlet</servlet-name><servlet-class>") +
+            BatServlet.class.getName() +
+            ("</servlet-class></servlet> <servlet-mapping><servlet-name>Bat " +
+             "Servlet</servlet-name><url-pattern>/bat</url-pattern></" +
+             "servlet-mapping>"))
+            .getBytes());
+    return baseDeployment(webXml).addClasses(
+        BatRequestListener.class, BatSessionListener.class,
+        BatServletContextListener.class, BatListener.class, BatServlet.class,
+        Sewer.class);
+  }
 
-    @Test
-    public void testRequestListenerInjection(@ArquillianResource URL baseURL) throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpGet request = new HttpGet(new URL(baseURL, "bat?mode=request").toExternalForm());
-        assertEquals(HttpServletResponse.SC_OK, client.execute(request).getStatusLine().getStatusCode());
-    }
+  @Test
+  public void testRequestListenerInjection(@ArquillianResource URL baseURL)
+      throws Exception {
+    CloseableHttpClient client = HttpClients.createDefault();
+    HttpGet request =
+        new HttpGet(new URL(baseURL, "bat?mode=request").toExternalForm());
+    assertEquals(HttpServletResponse.SC_OK,
+                 client.execute(request).getStatusLine().getStatusCode());
+  }
 
-    @Test
-    public void testSceListenerInjection(@ArquillianResource URL baseURL) throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpGet request = new HttpGet(new URL(baseURL, "bat?mode=sce").toExternalForm());
-        assertEquals(HttpServletResponse.SC_OK, client.execute(request).getStatusLine().getStatusCode());
-    }
+  @Test
+  public void testSceListenerInjection(@ArquillianResource URL baseURL)
+      throws Exception {
+    CloseableHttpClient client = HttpClients.createDefault();
+    HttpGet request =
+        new HttpGet(new URL(baseURL, "bat?mode=sce").toExternalForm());
+    assertEquals(HttpServletResponse.SC_OK,
+                 client.execute(request).getStatusLine().getStatusCode());
+  }
 
-    @Test
-    public void testSessionListenerInjection(@ArquillianResource URL baseURL) throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpGet request = new HttpGet(new URL(baseURL, "bat?mode=session").toExternalForm());
-        assertEquals(HttpServletResponse.SC_OK, client.execute(request).getStatusLine().getStatusCode());
-    }
+  @Test
+  public void testSessionListenerInjection(@ArquillianResource URL baseURL)
+      throws Exception {
+    CloseableHttpClient client = HttpClients.createDefault();
+    HttpGet request =
+        new HttpGet(new URL(baseURL, "bat?mode=session").toExternalForm());
+    assertEquals(HttpServletResponse.SC_OK,
+                 client.execute(request).getStatusLine().getStatusCode());
+  }
 }

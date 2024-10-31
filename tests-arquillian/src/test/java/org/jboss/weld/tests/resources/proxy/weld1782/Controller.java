@@ -17,7 +17,6 @@
 package org.jboss.weld.tests.resources.proxy.weld1782;
 
 import java.util.concurrent.CountDownLatch;
-
 import javax.enterprise.context.ApplicationScoped;
 
 /**
@@ -27,14 +26,12 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class Controller {
 
-    private final CountDownLatch msgDeliveredLatch = new CountDownLatch(1);
-    private final CountDownLatch contextDestroyedLatch = new CountDownLatch(1);
+  private final CountDownLatch msgDeliveredLatch = new CountDownLatch(1);
+  private final CountDownLatch contextDestroyedLatch = new CountDownLatch(1);
 
-    public CountDownLatch getMsgDeliveredLatch() {
-        return msgDeliveredLatch;
-    }
+  public CountDownLatch getMsgDeliveredLatch() { return msgDeliveredLatch; }
 
-    public CountDownLatch getContextDestroyedLatch() {
-        return contextDestroyedLatch;
-    }
+  public CountDownLatch getContextDestroyedLatch() {
+    return contextDestroyedLatch;
+  }
 }

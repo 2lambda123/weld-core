@@ -21,6 +21,4 @@ import javax.enterprise.inject.Alternative;
 
 @Alternative
 @Priority(Integer.MIN_VALUE)
-public class MinValuePriorityAlternative {
-	
-}
+public class MinValuePriorityAlternative {}

@@ -24,11 +24,9 @@ import static org.junit.Assert.fail;
 
 import java.util.Iterator;
 import java.util.List;
-
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -48,107 +46,115 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class WeldInstanceTest {
 
-    @Deployment
-    public static Archive<?> createTestArchive() {
-        return ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(WeldInstanceTest.class)).addPackage(WeldInstanceTest.class.getPackage())
-            .addClass(ActionSequence.class);
+  @Deployment
+  public static Archive<?> createTestArchive() {
+    return ShrinkWrap
+        .create(BeanArchive.class,
+                Utils.getDeploymentNameAsHash(WeldInstanceTest.class))
+        .addPackage(WeldInstanceTest.class.getPackage())
+        .addClass(ActionSequence.class);
+  }
+
+  @Test
+  public void testIsResolvable(Client client) {
+    ActionSequence.reset();
+    assertNotNull(client);
+    assertTrue(client.getAlphaInstance().isResolvable());
+    assertFalse(client.getBigDecimalInstance().isResolvable());
+  }
+
+  @Test
+  public void testGetHandler(Client client, BeanManager beanManager) {
+    ActionSequence.reset();
+    assertNotNull(client);
+
+    Bean<?> alphaBean = beanManager.resolve(beanManager.getBeans(Alpha.class));
+    WeldInstance<Alpha> instance = client.getAlphaInstance();
+
+    Handler<Alpha> alpha1 = instance.getHandler();
+    assertEquals(alphaBean, alpha1.getBean());
+    assertEquals(Dependent.class, alpha1.getBean().getScope());
+
+    String alpha2Id;
+
+    // Test try-with-resource
+    try (Handler<Alpha> alpha2 = instance.getHandler()) {
+      alpha2Id = alpha2.get().getId();
+      assertFalse(alpha1.get().getId().equals(alpha2Id));
     }
 
-    @Test
-    public void testIsResolvable(Client client) {
-        ActionSequence.reset();
-        assertNotNull(client);
-        assertTrue(client.getAlphaInstance().isResolvable());
-        assertFalse(client.getBigDecimalInstance().isResolvable());
+    List<String> sequence = ActionSequence.getSequenceData();
+    assertEquals(1, sequence.size());
+    assertEquals(alpha2Id, sequence.get(0));
+
+    alpha1.destroy();
+    // Subsequent invocations are no-op
+    alpha1.destroy();
+
+    sequence = ActionSequence.getSequenceData();
+    assertEquals(2, sequence.size());
+
+    // Test normal scoped bean is also destroyed
+    WeldInstance<Bravo> bravoInstance =
+        client.getInstance().select(Bravo.class);
+    String bravoId = bravoInstance.get().getId();
+    try (Handler<Bravo> bravo = bravoInstance.getHandler()) {
+      assertEquals(bravoId, bravo.get().getId());
+      ActionSequence.reset();
     }
+    sequence = ActionSequence.getSequenceData();
+    assertEquals(1, sequence.size());
+    assertEquals(bravoId, sequence.get(0));
+  }
 
-    @Test
-    public void testGetHandler(Client client, BeanManager beanManager) {
-        ActionSequence.reset();
-        assertNotNull(client);
+  @Test
+  public void testGetAfterDestroyingContextualInstance(Client client) {
+    ActionSequence.reset();
+    assertNotNull(client);
 
-        Bean<?> alphaBean = beanManager.resolve(beanManager.getBeans(Alpha.class));
-        WeldInstance<Alpha> instance = client.getAlphaInstance();
+    Handler<Alpha> alphaHandle = client.getAlphaInstance().getHandler();
+    // trigger bean creation
+    alphaHandle.get();
+    // trigger bean destruction
+    alphaHandle.destroy();
+    // verify that the destruction happened
+    List<String> sequence = ActionSequence.getSequenceData();
+    assertEquals(1, sequence.size());
 
-        Handler<Alpha> alpha1 = instance.getHandler();
-        assertEquals(alphaBean, alpha1.getBean());
-        assertEquals(Dependent.class, alpha1.getBean().getScope());
-
-        String alpha2Id;
-
-        // Test try-with-resource
-        try (Handler<Alpha> alpha2 = instance.getHandler()) {
-            alpha2Id = alpha2.get().getId();
-            assertFalse(alpha1.get().getId().equals(alpha2Id));
-        }
-
-        List<String> sequence = ActionSequence.getSequenceData();
-        assertEquals(1, sequence.size());
-        assertEquals(alpha2Id, sequence.get(0));
-
-        alpha1.destroy();
-        // Subsequent invocations are no-op
-        alpha1.destroy();
-
-        sequence = ActionSequence.getSequenceData();
-        assertEquals(2, sequence.size());
-
-        // Test normal scoped bean is also destroyed
-        WeldInstance<Bravo> bravoInstance = client.getInstance().select(Bravo.class);
-        String bravoId = bravoInstance.get().getId();
-        try (Handler<Bravo> bravo = bravoInstance.getHandler()) {
-            assertEquals(bravoId, bravo.get().getId());
-            ActionSequence.reset();
-        }
-        sequence = ActionSequence.getSequenceData();
-        assertEquals(1, sequence.size());
-        assertEquals(bravoId, sequence.get(0));
+    // try to invoke Handle.get() again; this should throw an exception
+    try {
+      alphaHandle.get();
+      fail("Invoking Handle.get() after destroying contextual instance " +
+           "should throw an exception.");
+    } catch (IllegalStateException e) {
+      // expected
     }
+  }
 
-    @Test
-    public void testGetAfterDestroyingContextualInstance(Client client) {
-        ActionSequence.reset();
-        assertNotNull(client);
-
-        Handler<Alpha> alphaHandle = client.getAlphaInstance().getHandler();
-        // trigger bean creation
-        alphaHandle.get();
-        // trigger bean destruction
-        alphaHandle.destroy();
-        // verify that the destruction happened
-        List<String> sequence = ActionSequence.getSequenceData();
-        assertEquals(1, sequence.size());
-
-        // try to invoke Handle.get() again; this should throw an exception
-        try {
-            alphaHandle.get();
-            fail("Invoking Handle.get() after destroying contextual instance should throw an exception.");
-        } catch (IllegalStateException e) {
-            // expected
-        }
+  @Test
+  public void testHandlers(WeldInstance<Processor> instance) {
+    ActionSequence.reset();
+    assertTrue(instance.isAmbiguous());
+    for (Handler<Processor> handler : instance.handlers()) {
+      handler.get().ping();
+      if (handler.getBean().getScope().equals(Dependent.class)) {
+        handler.destroy();
+      }
     }
+    assertEquals(3, ActionSequence.getSequenceSize());
+    ActionSequence.assertSequenceDataContainsAll("firstPing", "secondPing",
+                                                 "firstDestroy");
 
-    @Test
-    public void testHandlers(WeldInstance<Processor> instance) {
-        ActionSequence.reset();
-        assertTrue(instance.isAmbiguous());
-        for (Handler<Processor> handler : instance.handlers()) {
-            handler.get().ping();
-            if (handler.getBean().getScope().equals(Dependent.class)) {
-                handler.destroy();
-            }
-        }
-        assertEquals(3, ActionSequence.getSequenceSize());
-        ActionSequence.assertSequenceDataContainsAll("firstPing", "secondPing", "firstDestroy");
-
-        ActionSequence.reset();
-        assertTrue(instance.isAmbiguous());
-        for (Iterator<Handler<Processor>> iterator = instance.handlers().iterator(); iterator.hasNext();) {
-            try (Handler<Processor> handler = iterator.next()) {
-                handler.get().ping();
-            }
-        }
-        assertEquals(4, ActionSequence.getSequenceSize());
-        ActionSequence.assertSequenceDataContainsAll("firstPing", "secondPing", "firstDestroy", "secondDestroy");
+    ActionSequence.reset();
+    assertTrue(instance.isAmbiguous());
+    for (Iterator<Handler<Processor>> iterator = instance.handlers().iterator();
+         iterator.hasNext();) {
+      try (Handler<Processor> handler = iterator.next()) {
+        handler.get().ping();
+      }
     }
+    assertEquals(4, ActionSequence.getSequenceSize());
+    ActionSequence.assertSequenceDataContainsAll(
+        "firstPing", "secondPing", "firstDestroy", "secondDestroy");
+  }
 }

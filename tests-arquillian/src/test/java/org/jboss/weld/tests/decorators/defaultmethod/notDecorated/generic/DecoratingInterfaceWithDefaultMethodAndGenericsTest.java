@@ -17,6 +17,7 @@
 
 package org.jboss.weld.tests.decorators.defaultmethod.notDecorated.generic;
 
+import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -27,27 +28,31 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-
 /**
- * Similar to {@code DecoratingInterfaceWithDefaultMethodTest} but the interface uses generics.
+ * Similar to {@code DecoratingInterfaceWithDefaultMethodTest} but the interface
+ * uses generics.
  */
 @RunWith(Arquillian.class)
 public class DecoratingInterfaceWithDefaultMethodAndGenericsTest {
 
-    @Deployment
-    public static Archive<?> deploy() {
-        return ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(DecoratingInterfaceWithDefaultMethodAndGenericsTest.class))
-                .decorate(DecoratorClass.class)
-                .addPackage(DecoratingInterfaceWithDefaultMethodAndGenericsTest.class.getPackage());
-    }
+  @Deployment
+  public static Archive<?> deploy() {
+    return ShrinkWrap
+        .create(BeanArchive.class,
+                Utils.getDeploymentNameAsHash(
+                    DecoratingInterfaceWithDefaultMethodAndGenericsTest.class))
+        .decorate(DecoratorClass.class)
+        .addPackage(DecoratingInterfaceWithDefaultMethodAndGenericsTest
+                        .class.getPackage());
+  }
 
-    @Inject
-    SomeBean bean;
+  @Inject SomeBean bean;
 
-    @Test
-    public void testDecoratorOnInterfaceWithDefaultMethod() {
-        Assert.assertEquals("foo", bean.defaultMethod().getString());
-        Assert.assertEquals(DecoratorClass.class.getSimpleName() + SomeBean.class.getSimpleName(), bean.ping());
-    }
+  @Test
+  public void testDecoratorOnInterfaceWithDefaultMethod() {
+    Assert.assertEquals("foo", bean.defaultMethod().getString());
+    Assert.assertEquals(DecoratorClass.class.getSimpleName() +
+                            SomeBean.class.getSimpleName(),
+                        bean.ping());
+  }
 }

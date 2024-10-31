@@ -18,15 +18,14 @@ package org.jboss.weld.environment.servlet.test.se.coop.builder;
 
 import static org.junit.Assert.assertEquals;
 
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.WebClient;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.jboss.weld.environment.servlet.Listener;
 import org.junit.Test;
-
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
 
 /**
  * Testcase for WELD-1927
@@ -36,57 +35,66 @@ import com.gargoylesoftware.htmlunit.WebClient;
  */
 public class WeldSeBuilderTest {
 
-    @Test
-    public void testPassingWeldSeBuilderToWeldServlet() throws Exception {
-        Weld builder = new Weld().disableDiscovery().beanClasses(Cat.class);
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.addEventListener(Listener.using(builder));
-        test(context);
-    }
+  @Test
+  public void testPassingWeldSeBuilderToWeldServlet() throws Exception {
+    Weld builder = new Weld().disableDiscovery().beanClasses(Cat.class);
+    ServletContextHandler context =
+        new ServletContextHandler(ServletContextHandler.SESSIONS);
+    context.addEventListener(Listener.using(builder));
+    test(context);
+  }
 
-    @Test
-    public void testPassingWeldSeBuilderToWeldServletViaParam() throws Exception {
-        Weld builder = new Weld().disableDiscovery().beanClasses(Cat.class);
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.addEventListener(new Listener());
-        context.setAttribute(Listener.CONTAINER_ATTRIBUTE_NAME, builder);
-        test(context);
-    }
+  @Test
+  public void testPassingWeldSeBuilderToWeldServletViaParam() throws Exception {
+    Weld builder = new Weld().disableDiscovery().beanClasses(Cat.class);
+    ServletContextHandler context =
+        new ServletContextHandler(ServletContextHandler.SESSIONS);
+    context.addEventListener(new Listener());
+    context.setAttribute(Listener.CONTAINER_ATTRIBUTE_NAME, builder);
+    test(context);
+  }
 
-    @Test
-    public void testPassingWeldSeContainerToWeldServlet() throws Exception {
-        try (WeldContainer weld = new Weld().disableDiscovery().beanClasses(Cat.class).initialize()) {
-            ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-            context.addEventListener(Listener.using(weld));
-            test(context);
-        }
+  @Test
+  public void testPassingWeldSeContainerToWeldServlet() throws Exception {
+    try (
+        WeldContainer weld =
+            new Weld().disableDiscovery().beanClasses(Cat.class).initialize()) {
+      ServletContextHandler context =
+          new ServletContextHandler(ServletContextHandler.SESSIONS);
+      context.addEventListener(Listener.using(weld));
+      test(context);
     }
+  }
 
-    @Test
-    public void testPassingWeldSeContainerToWeldServletViaParam() throws Exception {
-        try (WeldContainer weld = new Weld().disableDiscovery().beanClasses(Cat.class).initialize()) {
-            ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-            context.addEventListener(new Listener());
-            context.setAttribute(Listener.CONTAINER_ATTRIBUTE_NAME, weld);
-            test(context);
-        }
+  @Test
+  public void testPassingWeldSeContainerToWeldServletViaParam()
+      throws Exception {
+    try (
+        WeldContainer weld =
+            new Weld().disableDiscovery().beanClasses(Cat.class).initialize()) {
+      ServletContextHandler context =
+          new ServletContextHandler(ServletContextHandler.SESSIONS);
+      context.addEventListener(new Listener());
+      context.setAttribute(Listener.CONTAINER_ATTRIBUTE_NAME, weld);
+      test(context);
     }
+  }
 
-    private void test(ServletContextHandler context) throws Exception {
-        Server server = new Server(8080);
-        context.setContextPath("/");
-        server.setHandler(context);
-        context.addServlet(TestServlet.class, "/test");
-        server.start();
+  private void test(ServletContextHandler context) throws Exception {
+    Server server = new Server(8080);
+    context.setContextPath("/");
+    server.setHandler(context);
+    context.addServlet(TestServlet.class, "/test");
+    server.start();
 
-        try {
-            WebClient webClient = new WebClient();
-            webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
-            Page page = webClient.getPage("http://localhost:8080/test");
-            assertEquals("Kitty", page.getWebResponse().getContentAsString().trim());
-        } finally {
-            // no need to stop Weld here, it is stopped by weld-servlet
-            server.stop();
-        }
+    try {
+      WebClient webClient = new WebClient();
+      webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+      Page page = webClient.getPage("http://localhost:8080/test");
+      assertEquals("Kitty", page.getWebResponse().getContentAsString().trim());
+    } finally {
+      // no need to stop Weld here, it is stopped by weld-servlet
+      server.stop();
     }
+  }
 }

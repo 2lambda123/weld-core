@@ -22,7 +22,5 @@ import javax.enterprise.inject.Vetoed;
 @Vetoed
 public class One {
 
-    public String pingOne() {
-        return "one";
-    }
+  public String pingOne() { return "one"; }
 }

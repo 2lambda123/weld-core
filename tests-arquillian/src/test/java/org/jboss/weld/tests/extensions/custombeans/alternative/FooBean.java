@@ -30,68 +30,67 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.Prioritized;
 
 public class FooBean implements Bean<Foo>, Prioritized {
-    @Override
-    public Class<?> getBeanClass() {
-        return Foo.class;
-    }
+  @Override
+  public Class<?> getBeanClass() {
+    return Foo.class;
+  }
 
-    @Override
-    public Set<InjectionPoint> getInjectionPoints() {
-        return Collections.EMPTY_SET;
-    }
+  @Override
+  public Set<InjectionPoint> getInjectionPoints() {
+    return Collections.EMPTY_SET;
+  }
 
-    @Override
-    public boolean isNullable() {
-        return false;
-    }
+  @Override
+  public boolean isNullable() {
+    return false;
+  }
 
-    @Override
-    public Foo create(CreationalContext<Foo> creationalContext) {
-        return new Foo(FooBean.class.getSimpleName());
-    }
+  @Override
+  public Foo create(CreationalContext<Foo> creationalContext) {
+    return new Foo(FooBean.class.getSimpleName());
+  }
 
-    @Override
-    public void destroy(Foo instance, CreationalContext<Foo> creationalContext) {
-    }
+  @Override
+  public void destroy(Foo instance, CreationalContext<Foo> creationalContext) {}
 
-    private <T> Set<T> immutableSet(T... items) {
-        Set<T> set = new HashSet<T>();
-        Collections.addAll(set, items);
-        return Collections.unmodifiableSet(set);
-    }
+  private <T> Set<T> immutableSet(T... items) {
+    Set<T> set = new HashSet<T>();
+    Collections.addAll(set, items);
+    return Collections.unmodifiableSet(set);
+  }
 
-    @Override
-    public Set<Type> getTypes() {
-        return immutableSet(Object.class, Foo.class);
-    }
+  @Override
+  public Set<Type> getTypes() {
+    return immutableSet(Object.class, Foo.class);
+  }
 
-    @Override
-    public Set<Annotation> getQualifiers() {
-        return immutableSet(Default.Literal.INSTANCE);
-    }
+  @Override
+  public Set<Annotation> getQualifiers() {
+    return immutableSet(Default.Literal.INSTANCE);
+  }
 
-    @Override
-    public Class<? extends Annotation> getScope() {
-        return ApplicationScoped.class;
-    }
+  @Override
+  public Class<? extends Annotation> getScope() {
+    return ApplicationScoped.class;
+  }
 
-    @Override
-    public String getName() {
-        return null;
-    }
+  @Override
+  public String getName() {
+    return null;
+  }
 
-    @Override
-    public Set<Class<? extends Annotation>> getStereotypes() {
-        return Collections.EMPTY_SET;
-    }
+  @Override
+  public Set<Class<? extends Annotation>> getStereotypes() {
+    return Collections.EMPTY_SET;
+  }
 
-    @Override
-    public boolean isAlternative() {
-        return true;
-    }
+  @Override
+  public boolean isAlternative() {
+    return true;
+  }
 
-    @Override
-    public int getPriority() {
-        return 1;
-    }
+  @Override
+  public int getPriority() {
+    return 1;
+  }
 }

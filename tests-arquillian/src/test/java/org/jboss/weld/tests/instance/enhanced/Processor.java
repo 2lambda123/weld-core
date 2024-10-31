@@ -22,5 +22,5 @@ package org.jboss.weld.tests.instance.enhanced;
  */
 public interface Processor {
 
-    void ping();
+  void ping();
 }

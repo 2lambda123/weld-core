@@ -22,19 +22,15 @@ package org.jboss.weld.tests.decorators.defaultmethod.notDecorated.generic;
  */
 public class Foo<K, L extends String> {
 
-    private K typeParam;
-    private L string;
+  private K typeParam;
+  private L string;
 
-    public Foo(K typeParam, L string) {
-        this.typeParam = typeParam;
-        this.string = string;
-    }
+  public Foo(K typeParam, L string) {
+    this.typeParam = typeParam;
+    this.string = string;
+  }
 
-    public L getString() {
-        return string;
-    }
+  public L getString() { return string; }
 
-    public K getTypeParam() {
-        return typeParam;
-    }
+  public K getTypeParam() { return typeParam; }
 }

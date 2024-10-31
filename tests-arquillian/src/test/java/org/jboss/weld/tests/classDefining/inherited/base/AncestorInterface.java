@@ -18,9 +18,10 @@
 package org.jboss.weld.tests.classDefining.inherited.base;
 
 /**
- * Name matters - it deliberately alphabetically precedes MyInterface to verify correct proxy name
+ * Name matters - it deliberately alphabetically precedes MyInterface to verify
+ * correct proxy name
  */
 public interface AncestorInterface {
 
-    String ping();
+  String ping();
 }

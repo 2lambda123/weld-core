@@ -39,146 +39,145 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class InterceptorBridgeMethodTest {
 
-    @Deployment
-    public static JavaArchive createTestArchive() {
-        return ShrinkWrap
-                .create(BeanArchive.class,
-                        Utils.getDeploymentNameAsHash(InterceptorBridgeMethodTest.class))
-                .intercept(MissileInterceptor.class)
-                .addPackage(InterceptorBridgeMethodTest.class.getPackage())
-                .addClass(ActionSequence.class);
-    }
+  @Deployment
+  public static JavaArchive createTestArchive() {
+    return ShrinkWrap
+        .create(BeanArchive.class, Utils.getDeploymentNameAsHash(
+                                       InterceptorBridgeMethodTest.class))
+        .intercept(MissileInterceptor.class)
+        .addPackage(InterceptorBridgeMethodTest.class.getPackage())
+        .addClass(ActionSequence.class);
+  }
 
-    @Test
-    public void testChild(@Juicy Child child) {
-        // Child extends Parent<String> implements Base<T>
-        reset();
-        child.invokeA("foo");
-        verify(Child.class);
-        reset();
-        child.getA();
-        verify(Parent.class);
-        reset();
-        child.invokeB("foo");
-        verify(Parent.class);
-        reset();
-        child.getB();
-        verify(Parent.class);
-        reset();
-        child.invokeDefault("foo");
-        verify(Parent.class);
+  @Test
+  public void testChild(@Juicy Child child) {
+    // Child extends Parent<String> implements Base<T>
+    reset();
+    child.invokeA("foo");
+    verify(Child.class);
+    reset();
+    child.getA();
+    verify(Parent.class);
+    reset();
+    child.invokeB("foo");
+    verify(Parent.class);
+    reset();
+    child.getB();
+    verify(Parent.class);
+    reset();
+    child.invokeDefault("foo");
+    verify(Parent.class);
 
-        reset();
-        Parent<String> parent = child;
-        parent.invokeA("foo");
-        verify(Child.class);
-    }
+    reset();
+    Parent<String> parent = child;
+    parent.invokeA("foo");
+    verify(Child.class);
+  }
 
-    @Test
-    public void testJuicyBase(@Juicy Base<String> base) {
-        // Child gets injected
-        reset();
-        base.invokeA("foo");
-        verify(Child.class);
-        reset();
-        base.getA();
-        verify(Parent.class);
-        reset();
-        base.invokeB("foo");
-        verify(Parent.class);
-        reset();
-        base.getB();
-        verify(Parent.class);
-        reset();
-        base.invokeDefault("foo");
-        verify(Parent.class);
+  @Test
+  public void testJuicyBase(@Juicy Base<String> base) {
+    // Child gets injected
+    reset();
+    base.invokeA("foo");
+    verify(Child.class);
+    reset();
+    base.getA();
+    verify(Parent.class);
+    reset();
+    base.invokeB("foo");
+    verify(Parent.class);
+    reset();
+    base.getB();
+    verify(Parent.class);
+    reset();
+    base.invokeDefault("foo");
+    verify(Parent.class);
+  }
 
-    }
+  @Test
+  public void testSpecialBase(SpecialBase special) {
+    // SpecialChild gets injected
+    reset();
+    special.getA();
+    verify(SpecialChild.class);
+    reset();
+    special.invokeB("foo");
+    verify(SpecialChild.class);
+    reset();
+    special.getB();
+    verify(SpecialParent.class);
+    reset();
+    special.invokeDefault("foo");
+    verify(Base.class);
+  }
 
-    @Test
-    public void testSpecialBase(SpecialBase special) {
-        // SpecialChild gets injected
-        reset();
-        special.getA();
-        verify(SpecialChild.class);
-        reset();
-        special.invokeB("foo");
-        verify(SpecialChild.class);
-        reset();
-        special.getB();
-        verify(SpecialParent.class);
-        reset();
-        special.invokeDefault("foo");
-        verify(Base.class);
-    }
+  @Test
+  @Ignore("WELD-2424")
+  public void testSpecialBaseInvokeA(SpecialBase special) {
+    // SpecialChild gets injected
+    reset();
+    special.invokeA("foo");
+    verify(SpecialParent.class);
+  }
 
-    @Test
-    @Ignore("WELD-2424")
-    public void testSpecialBaseInvokeA(SpecialBase special) {
-        // SpecialChild gets injected
-        reset();
-        special.invokeA("foo");
-        verify(SpecialParent.class);
-    }
+  @Test
+  public void testSpecialChild(SpecialChild child) {
+    // SpecialChild extends AbstractParent<String> implements SpecialBase
+    reset();
+    child.invokeA("foo");
+    verify(SpecialParent.class);
+    reset();
+    child.getA();
+    verify(SpecialChild.class);
+    reset();
+    child.invokeB("foo");
+    verify(SpecialChild.class);
+    reset();
+    child.getB();
+    verify(SpecialParent.class);
+    reset();
+    child.invokeDefault("foo");
+    verify(Base.class);
+  }
 
-    @Test
-    public void testSpecialChild(SpecialChild child) {
-        // SpecialChild extends AbstractParent<String> implements SpecialBase
-        reset();
-        child.invokeA("foo");
-        verify(SpecialParent.class);
-        reset();
-        child.getA();
-        verify(SpecialChild.class);
-        reset();
-        child.invokeB("foo");
-        verify(SpecialChild.class);
-        reset();
-        child.getB();
-        verify(SpecialParent.class);
-        reset();
-        child.invokeDefault("foo");
-        verify(Base.class);
-    }
+  @Test
+  public void testSpecialBaseAsInterface(SpecialBase specialBase) {
+    // SpecialBase extends Base<String>
+    reset();
+    specialBase.invokeA("foo");
+    verify(SpecialParent.class);
+    reset();
+  }
 
-    @Test
-    public void testSpecialBaseAsInterface(SpecialBase specialBase) {
-        // SpecialBase extends Base<String>
-        reset();
-        specialBase.invokeA("foo");
-        verify(SpecialParent.class);
-        reset();
-    }
+  @Test
+  public void testAbstractParent(SpecialParent<String> parent) {
+    // SpecialChild gets injected
+    reset();
+    parent.invokeA("foo");
+    verify(SpecialParent.class);
+    reset();
+    parent.getA();
+    verify(SpecialChild.class);
+    reset();
+    parent.invokeB("foo");
+    verify(SpecialChild.class);
+    reset();
+    parent.getB();
+    verify(SpecialParent.class);
+    reset();
+    parent.invokeDefault("foo");
+    verify(Base.class);
+  }
 
-    @Test
-    public void testAbstractParent(SpecialParent<String> parent) {
-        // SpecialChild gets injected
-        reset();
-        parent.invokeA("foo");
-        verify(SpecialParent.class);
-        reset();
-        parent.getA();
-        verify(SpecialChild.class);
-        reset();
-        parent.invokeB("foo");
-        verify(SpecialChild.class);
-        reset();
-        parent.getB();
-        verify(SpecialParent.class);
-        reset();
-        parent.invokeDefault("foo");
-        verify(Base.class);
-    }
+  private void reset() {
+    MissileInterceptor.INTERCEPTED.set(false);
+    ActionSequence.reset();
+  }
 
-    private void reset() {
-        MissileInterceptor.INTERCEPTED.set(false);
-        ActionSequence.reset();
-    }
-
-    private void verify(Class<?> expectedClazz) {
-        assertTrue(MissileInterceptor.INTERCEPTED.get());
-        assertEquals(1, ActionSequence.getSequenceSize());
-        assertEquals(expectedClazz.getName(), ActionSequence.getSequenceData().get(0));
-    }
-
+  private void verify(Class<?> expectedClazz) {
+    assertTrue(MissileInterceptor.INTERCEPTED.get());
+    assertEquals(1, ActionSequence.getSequenceSize());
+    assertEquals(expectedClazz.getName(),
+                 ActionSequence.getSequenceData().get(0));
+  }
 }

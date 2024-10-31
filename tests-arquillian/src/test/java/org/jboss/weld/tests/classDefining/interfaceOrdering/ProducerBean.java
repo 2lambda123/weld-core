@@ -25,25 +25,25 @@ import org.jboss.weld.tests.classDefining.interfaceOrdering.b.Two;
 @ApplicationScoped
 public class ProducerBean {
 
-    @Produces
-    @ApplicationScoped
-    public B produceB() {
-        return new B() {
-            @Override
-            public String pingB() {
-                return "B";
-            }
+  @Produces
+  @ApplicationScoped
+  public B produceB() {
+    return new B() {
+      @Override
+      public String pingB() {
+        return "B";
+      }
 
-            @Override
-            public String pingA() {
-                return "A";
-            }
-        };
-    }
+      @Override
+      public String pingA() {
+        return "A";
+      }
+    };
+  }
 
-    @Produces
-    @ApplicationScoped
-    public Two produceTwo() {
-        return new Two();
-    }
+  @Produces
+  @ApplicationScoped
+  public Two produceTwo() {
+    return new Two();
+  }
 }

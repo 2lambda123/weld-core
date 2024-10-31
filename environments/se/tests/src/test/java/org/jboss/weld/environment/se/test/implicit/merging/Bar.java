@@ -17,5 +17,4 @@
 
 package org.jboss.weld.environment.se.test.implicit.merging;
 
-public class Bar {
-}
+public class Bar {}

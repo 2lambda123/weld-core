@@ -23,11 +23,7 @@ import javax.inject.Inject;
 @Dependent
 public class BeanInjectingSyntheticInteger {
 
-    @Random
-    @Inject
-    Integer injectedBean;
+  @Random @Inject Integer injectedBean;
 
-    public Integer getNumber() {
-        return injectedBean;
-    }
+  public Integer getNumber() { return injectedBean; }
 }

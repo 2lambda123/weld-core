@@ -19,7 +19,6 @@ package org.jboss.weld.environment.se.test.event.options.timeout;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
 import org.jboss.weld.executor.AbstractExecutorServices;
 import org.jboss.weld.executor.DaemonThreadFactory;
 
@@ -29,24 +28,21 @@ import org.jboss.weld.executor.DaemonThreadFactory;
  */
 public class IncompleteCustomExecutorServices extends AbstractExecutorServices {
 
-    static final String PREFIX = "weld-worker-test";
+  static final String PREFIX = "weld-worker-test";
 
-    private final transient ExecutorService taskExecutor = Executors
-            .newSingleThreadExecutor(new DaemonThreadFactory(PREFIX));
+  private final transient ExecutorService taskExecutor =
+      Executors.newSingleThreadExecutor(new DaemonThreadFactory(PREFIX));
 
-    public ExecutorService getTaskExecutor() {
-        return taskExecutor;
-    }
+  public ExecutorService getTaskExecutor() { return taskExecutor; }
 
-    @Override
-    protected int getThreadPoolSize() {
-        return 1;
-    }
+  @Override
+  protected int getThreadPoolSize() {
+    return 1;
+  }
 
-    @Override
-    public ScheduledExecutorService getTimerExecutor() {
-        // deliberately return null
-        return null;
-    }
-
+  @Override
+  public ScheduledExecutorService getTimerExecutor() {
+    // deliberately return null
+    return null;
+  }
 }

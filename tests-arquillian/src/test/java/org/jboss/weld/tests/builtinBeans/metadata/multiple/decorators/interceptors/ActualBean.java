@@ -22,9 +22,9 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ActualBean implements SomeInterface {
 
-    @Override
-    @SomeBinding
-    public String ping() {
-        return "pong";
-    }
+  @Override
+  @SomeBinding
+  public String ping() {
+    return "pong";
+  }
 }

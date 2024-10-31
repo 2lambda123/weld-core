@@ -26,10 +26,8 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.spi.Bean;
-
 import org.jboss.arquillian.container.se.api.ClassPath;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -53,151 +51,169 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class WeldInstanceTest {
 
-    @Deployment
-    public static Archive<?> createTestArchive() {
-        return ClassPath.builder().add(ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(WeldInstanceTest.class))
-                .addPackage(WeldInstanceTest.class.getPackage()).addClass(ActionSequence.class)).build();
-    }
+  @Deployment
+  public static Archive<?> createTestArchive() {
+    return ClassPath.builder()
+        .add(ShrinkWrap
+                 .create(BeanArchive.class,
+                         Utils.getDeploymentNameAsHash(WeldInstanceTest.class))
+                 .addPackage(WeldInstanceTest.class.getPackage())
+                 .addClass(ActionSequence.class))
+        .build();
+  }
 
-    @Test
-    public void testIsResolvable(Client client) {
-        try (WeldContainer container = new Weld().initialize()) {
-            assertTrue(container.select(Alpha.class).isResolvable());
-            assertFalse(container.select(BigDecimal.class, Juicy.Literal.INSTANCE).isResolvable());
-        }
+  @Test
+  public void testIsResolvable(Client client) {
+    try (WeldContainer container = new Weld().initialize()) {
+      assertTrue(container.select(Alpha.class).isResolvable());
+      assertFalse(container.select(BigDecimal.class, Juicy.Literal.INSTANCE)
+                      .isResolvable());
     }
+  }
 
-    @Test
-    public void testGetHandler() {
+  @Test
+  public void testGetHandler() {
+    ActionSequence.reset();
+    try (WeldContainer container = new Weld().initialize()) {
+
+      Bean<?> alphaBean = container.getBeanManager().resolve(
+          container.getBeanManager().getBeans(Alpha.class));
+      WeldInstance<Alpha> instance = container.select(Alpha.class);
+
+      Handler<Alpha> alpha1 = instance.getHandler();
+      assertEquals(alphaBean, alpha1.getBean());
+      assertEquals(Dependent.class, alpha1.getBean().getScope());
+      // Contextual reference is obtained lazily
+      assertNull(ActionSequence.getSequenceData());
+
+      String alpha2Id;
+
+      // Test try-with-resource
+      try (Handler<Alpha> alpha2 = instance.getHandler()) {
+        assertNull(ActionSequence.getSequenceData());
+        alpha2Id = alpha2.get().getId();
+        assertFalse(alpha1.get().getId().equals(alpha2Id));
+      }
+
+      List<String> sequence = ActionSequence.getSequenceData();
+      assertEquals(3, sequence.size());
+      assertEquals("c" + alpha2Id, sequence.get(0));
+      assertEquals("c" + alpha1.get().getId(), sequence.get(1));
+      assertEquals("d" + alpha2Id, sequence.get(2));
+
+      alpha1.destroy();
+      // Alpha1 destroyed
+      sequence = ActionSequence.getSequenceData();
+      assertEquals(4, sequence.size());
+      // Subsequent invocations are no-op
+      alpha1.destroy();
+
+      // Test normal scoped bean is also destroyed
+      WeldInstance<Bravo> bravoInstance = container.select(Bravo.class);
+      String bravoId = bravoInstance.get().getId();
+      try (Handler<Bravo> bravo = bravoInstance.getHandler()) {
+        assertEquals(bravoId, bravo.get().getId());
         ActionSequence.reset();
-        try (WeldContainer container = new Weld().initialize()) {
-
-            Bean<?> alphaBean = container.getBeanManager().resolve(container.getBeanManager().getBeans(Alpha.class));
-            WeldInstance<Alpha> instance = container.select(Alpha.class);
-
-            Handler<Alpha> alpha1 = instance.getHandler();
-            assertEquals(alphaBean, alpha1.getBean());
-            assertEquals(Dependent.class, alpha1.getBean().getScope());
-            // Contextual reference is obtained lazily
-            assertNull(ActionSequence.getSequenceData());
-
-            String alpha2Id;
-
-            // Test try-with-resource
-            try (Handler<Alpha> alpha2 = instance.getHandler()) {
-                assertNull(ActionSequence.getSequenceData());
-                alpha2Id = alpha2.get().getId();
-                assertFalse(alpha1.get().getId().equals(alpha2Id));
-            }
-
-            List<String> sequence = ActionSequence.getSequenceData();
-            assertEquals(3, sequence.size());
-            assertEquals("c" + alpha2Id, sequence.get(0));
-            assertEquals("c" + alpha1.get().getId(), sequence.get(1));
-            assertEquals("d" + alpha2Id, sequence.get(2));
-
-            alpha1.destroy();
-            // Alpha1 destroyed
-            sequence = ActionSequence.getSequenceData();
-            assertEquals(4, sequence.size());
-            // Subsequent invocations are no-op
-            alpha1.destroy();
-
-            // Test normal scoped bean is also destroyed
-            WeldInstance<Bravo> bravoInstance = container.select(Bravo.class);
-            String bravoId = bravoInstance.get().getId();
-            try (Handler<Bravo> bravo = bravoInstance.getHandler()) {
-                assertEquals(bravoId, bravo.get().getId());
-                ActionSequence.reset();
-            }
-            sequence = ActionSequence.getSequenceData();
-            assertEquals(1, sequence.size());
-            assertEquals("d" + bravoId, sequence.get(0));
-        }
+      }
+      sequence = ActionSequence.getSequenceData();
+      assertEquals(1, sequence.size());
+      assertEquals("d" + bravoId, sequence.get(0));
     }
+  }
 
-    @Test
-    public void testGetAfterDestroyingContextualInstance() {
-        ActionSequence.reset();
-        try (WeldContainer container = new Weld().initialize()) {
-            Client client = container.select(Client.class).get();
-            assertNotNull(client);
+  @Test
+  public void testGetAfterDestroyingContextualInstance() {
+    ActionSequence.reset();
+    try (WeldContainer container = new Weld().initialize()) {
+      Client client = container.select(Client.class).get();
+      assertNotNull(client);
 
-            Handler<Alpha> alphaHandle = client.getAlphaInstance().getHandler();
-            // trigger bean creation and assert
-            alphaHandle.get();
-            List<String> sequence = ActionSequence.getSequenceData();
-            assertEquals(1, sequence.size());
-            // trigger bean destruction
-            alphaHandle.destroy();
-            // verify that the destruction happened
-            sequence = ActionSequence.getSequenceData();
-            assertEquals(2, sequence.size());
+      Handler<Alpha> alphaHandle = client.getAlphaInstance().getHandler();
+      // trigger bean creation and assert
+      alphaHandle.get();
+      List<String> sequence = ActionSequence.getSequenceData();
+      assertEquals(1, sequence.size());
+      // trigger bean destruction
+      alphaHandle.destroy();
+      // verify that the destruction happened
+      sequence = ActionSequence.getSequenceData();
+      assertEquals(2, sequence.size());
 
-            // try to invoke Handle.get() again; this should throw an exception
-            try {
-                alphaHandle.get();
-                fail("Invoking Handle.get() after destroying contextual instance should throw an exception.");
-            } catch (IllegalStateException e) {
-                // expected
-            }
-        }
+      // try to invoke Handle.get() again; this should throw an exception
+      try {
+        alphaHandle.get();
+        fail("Invoking Handle.get() after destroying contextual instance " +
+             "should throw an exception.");
+      } catch (IllegalStateException e) {
+        // expected
+      }
     }
+  }
 
-    @Test
-    public void testHandlers() {
-        ActionSequence.reset();
-        try (WeldContainer container = new Weld().initialize()) {
-            WeldInstance<Processor> instance = container.select(Processor.class);
-            assertTrue(instance.isAmbiguous());
-            for (Handler<Processor> handler : instance.handlers()) {
-                handler.get().ping();
-                if (handler.getBean().getScope().equals(Dependent.class)) {
-                    handler.destroy();
-                }
-            }
-            assertEquals(3, ActionSequence.getSequenceSize());
-            ActionSequence.assertSequenceDataContainsAll("firstPing", "secondPing", "firstDestroy");
-
-            ActionSequence.reset();
-            assertTrue(instance.isAmbiguous());
-            for (Iterator<Handler<Processor>> iterator = instance.handlers().iterator(); iterator.hasNext();) {
-                try (Handler<Processor> handler = iterator.next()) {
-                    handler.get().ping();
-                }
-            }
-            assertEquals(4, ActionSequence.getSequenceSize());
-            ActionSequence.assertSequenceDataContainsAll("firstPing", "secondPing", "firstDestroy", "secondDestroy");
+  @Test
+  public void testHandlers() {
+    ActionSequence.reset();
+    try (WeldContainer container = new Weld().initialize()) {
+      WeldInstance<Processor> instance = container.select(Processor.class);
+      assertTrue(instance.isAmbiguous());
+      for (Handler<Processor> handler : instance.handlers()) {
+        handler.get().ping();
+        if (handler.getBean().getScope().equals(Dependent.class)) {
+          handler.destroy();
         }
+      }
+      assertEquals(3, ActionSequence.getSequenceSize());
+      ActionSequence.assertSequenceDataContainsAll("firstPing", "secondPing",
+                                                   "firstDestroy");
 
-    }
-
-    @Test
-    public void testHandlersStream() {
-        ActionSequence.reset();
-        try (WeldContainer container = new Weld().initialize()) {
-
-            Handler<Processor> processor = container.select(Processor.class).handlersStream().filter(h -> Dependent.class.equals(h.getBean().getScope()))
-                    .findFirst().orElse(null);
-            assertNull(ActionSequence.getSequenceData());
-            assertNotNull(processor);
-            assertEquals(FirstProcessor.class, processor.getBean().getBeanClass());
-            assertEquals(FirstProcessor.class.getName(), processor.get().getId());
-            processor.destroy();
-            List<String> sequence = ActionSequence.getSequenceData();
-            assertEquals(1, sequence.size());
-            assertEquals("firstDestroy", sequence.get(0));
-
-            Handler<WithPriority> withPriority = container.select(WithPriority.class).handlersStream().sorted(container.getPriorityComparator()).findFirst()
-                    .orElse(null);
-            assertNotNull(withPriority);
-            assertEquals(Priority3.class, withPriority.getBean().getBeanClass());
-            withPriority.get();
-            sequence = ActionSequence.getSequenceData();
-            assertEquals(2, sequence.size());
-            assertEquals("firstDestroy", sequence.get(0));
-            assertEquals("c" + Priority3.class.getName(), sequence.get(1));
+      ActionSequence.reset();
+      assertTrue(instance.isAmbiguous());
+      for (Iterator<Handler<Processor>> iterator =
+               instance.handlers().iterator();
+           iterator.hasNext();) {
+        try (Handler<Processor> handler = iterator.next()) {
+          handler.get().ping();
         }
+      }
+      assertEquals(4, ActionSequence.getSequenceSize());
+      ActionSequence.assertSequenceDataContainsAll(
+          "firstPing", "secondPing", "firstDestroy", "secondDestroy");
     }
+  }
 
+  @Test
+  public void testHandlersStream() {
+    ActionSequence.reset();
+    try (WeldContainer container = new Weld().initialize()) {
+
+      Handler<Processor> processor =
+          container.select(Processor.class)
+              .handlersStream()
+              .filter(h -> Dependent.class.equals(h.getBean().getScope()))
+              .findFirst()
+              .orElse(null);
+      assertNull(ActionSequence.getSequenceData());
+      assertNotNull(processor);
+      assertEquals(FirstProcessor.class, processor.getBean().getBeanClass());
+      assertEquals(FirstProcessor.class.getName(), processor.get().getId());
+      processor.destroy();
+      List<String> sequence = ActionSequence.getSequenceData();
+      assertEquals(1, sequence.size());
+      assertEquals("firstDestroy", sequence.get(0));
+
+      Handler<WithPriority> withPriority =
+          container.select(WithPriority.class)
+              .handlersStream()
+              .sorted(container.getPriorityComparator())
+              .findFirst()
+              .orElse(null);
+      assertNotNull(withPriority);
+      assertEquals(Priority3.class, withPriority.getBean().getBeanClass());
+      withPriority.get();
+      sequence = ActionSequence.getSequenceData();
+      assertEquals(2, sequence.size());
+      assertEquals("firstDestroy", sequence.get(0));
+      assertEquals("c" + Priority3.class.getName(), sequence.get(1));
+    }
+  }
 }

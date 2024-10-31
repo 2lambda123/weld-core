@@ -24,41 +24,39 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class TestBean {
 
-    private int constructions;
-    private int destructions;
-    private Phaser phaser;
+  private int constructions;
+  private int destructions;
+  private Phaser phaser;
 
-    public void constructed() {
-        constructions++;
-        phaser.register();
+  public void constructed() {
+    constructions++;
+    phaser.register();
+  }
+
+  public void destroyed() {
+    destructions++;
+    phaser.arriveAndDeregister();
+  }
+
+  public boolean isOk() {
+    try {
+      // either the phaser has already reached stability (phase 0 and
+      // terminated) or we wait for it
+      phaser.awaitAdvanceInterruptibly(0, 2l, TimeUnit.SECONDS);
+    } catch (InterruptedException | TimeoutException e) {
+      throw new IllegalStateException(
+          "Waiting for Phaser stability failed, exception throws was: " + e);
     }
+    return (constructions == destructions) &&
+        (constructions + destructions > 0);
+  }
 
-    public void destroyed() {
-        destructions++;
-        phaser.arriveAndDeregister();
-    }
+  public void reset() {
+    constructions = destructions = 0;
+    phaser = new Phaser();
+  }
 
-    public boolean isOk() {
-        try {
-            // either the phaser has already reached stability (phase 0 and terminated) or we wait for it
-            phaser.awaitAdvanceInterruptibly(0, 2l, TimeUnit.SECONDS);
-        } catch (InterruptedException | TimeoutException e) {
-            throw new IllegalStateException("Waiting for Phaser stability failed, exception throws was: " + e);
-        }
-        return (constructions == destructions) && (constructions + destructions > 0);
-    }
+  public int getConstructions() { return constructions; }
 
-    public void reset() {
-        constructions = destructions = 0;
-        phaser = new Phaser();
-    }
-
-    public int getConstructions() {
-        return constructions;
-    }
-
-    public int getDestructions() {
-        return destructions;
-    }
-
+  public int getDestructions() { return destructions; }
 }

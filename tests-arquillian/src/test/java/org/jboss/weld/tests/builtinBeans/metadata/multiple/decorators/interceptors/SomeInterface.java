@@ -19,5 +19,5 @@ package org.jboss.weld.tests.builtinBeans.metadata.multiple.decorators.intercept
 
 public interface SomeInterface {
 
-    String ping();
+  String ping();
 }

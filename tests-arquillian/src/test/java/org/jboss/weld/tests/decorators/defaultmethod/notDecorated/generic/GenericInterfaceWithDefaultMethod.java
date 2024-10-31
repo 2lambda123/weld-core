@@ -17,11 +17,10 @@
 
 package org.jboss.weld.tests.decorators.defaultmethod.notDecorated.generic;
 
-public interface GenericInterfaceWithDefaultMethod extends GenericInterface<Integer> {
+public interface GenericInterfaceWithDefaultMethod
+    extends GenericInterface<Integer> {
 
-    default Foo<Integer, String> defaultMethod() {
-        return new Foo<>(1, "foo");
-    }
+  default Foo<Integer, String> defaultMethod() { return new Foo<>(1, "foo"); }
 
-    String ping();
+  String ping();
 }

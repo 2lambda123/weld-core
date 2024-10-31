@@ -18,41 +18,42 @@ package org.jboss.weld.executor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.jboss.weld.logging.BootstrapLogger;
 
 /**
- * Implementation of {@link ExtendedExecutorServices} that uses a fixed thread pool. The size of the underlying thread pool is
- * determined by executing Runtime.getRuntime().availableProcessors() + 1.
+ * Implementation of {@link ExtendedExecutorServices} that uses a fixed thread
+ * pool. The size of the underlying thread pool is determined by executing
+ * Runtime.getRuntime().availableProcessors() + 1.
  *
  * @author Jozef Hartinger
  *
  */
 public class FixedThreadPoolExecutorServices extends AbstractExecutorServices {
 
-    private final int threadPoolSize;
+  private final int threadPoolSize;
 
-    private final ExecutorService executor;
+  private final ExecutorService executor;
 
-    public FixedThreadPoolExecutorServices(int threadPoolSize) {
-        this.threadPoolSize = threadPoolSize;
-        this.executor = Executors.newFixedThreadPool(threadPoolSize,
-                new DaemonThreadFactory("weld-worker-"));
-        BootstrapLogger.LOG.threadsInUse(threadPoolSize);
-    }
+  public FixedThreadPoolExecutorServices(int threadPoolSize) {
+    this.threadPoolSize = threadPoolSize;
+    this.executor = Executors.newFixedThreadPool(
+        threadPoolSize, new DaemonThreadFactory("weld-worker-"));
+    BootstrapLogger.LOG.threadsInUse(threadPoolSize);
+  }
 
-    @Override
-    public ExecutorService getTaskExecutor() {
-        return executor;
-    }
+  @Override
+  public ExecutorService getTaskExecutor() {
+    return executor;
+  }
 
-    @Override
-    public int getThreadPoolSize() {
-        return threadPoolSize;
-    }
+  @Override
+  public int getThreadPoolSize() {
+    return threadPoolSize;
+  }
 
-    @Override
-    public String toString() {
-        return "FixedThreadPoolExecutorServices [threadPoolSize=" + threadPoolSize + "]";
-    }
+  @Override
+  public String toString() {
+    return "FixedThreadPoolExecutorServices [threadPoolSize=" + threadPoolSize +
+        "]";
+  }
 }

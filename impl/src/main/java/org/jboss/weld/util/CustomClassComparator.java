@@ -20,41 +20,46 @@ package org.jboss.weld.util;
 import java.util.Comparator;
 
 /**
- * This comparator sorts classes alphabetically based on {@link Class#getName()} with notable difference that all
- * classes starting with {@code java.*} or {@code javax.*} come <b>after</b> all other classes.
+ * This comparator sorts classes alphabetically based on {@link Class#getName()}
+ * with notable difference that all classes starting with {@code java.*} or
+ * {@code javax.*} come <b>after</b> all other classes.
  *
- * E.g. a set of these classes {javax.bar.Baz, java.something.Foo, bar.baz.Quax, mypackage.indeed.SomeBean} would be sorted
- * in the following manner - {bar.baz.Quax, mypackage.indeed.SomeBean, java.something.Foo, javax.bar.Baz}.
+ * E.g. a set of these classes {javax.bar.Baz, java.something.Foo, bar.baz.Quax,
+ * mypackage.indeed.SomeBean} would be sorted in the following manner -
+ * {bar.baz.Quax, mypackage.indeed.SomeBean, java.something.Foo, javax.bar.Baz}.
  */
 public class CustomClassComparator implements Comparator<Class<?>> {
 
-    private final String javaPrefix = "java.";
-    private final String javaxPrefix = "javax.";
+  private final String javaPrefix = "java.";
+  private final String javaxPrefix = "javax.";
 
-    @Override
-    public int compare(Class<?> o1, Class<?> o2) {
-        String firstClassName = o1.getName();
-        String secondClassName = o2.getName();
-        // if no class starts with java.* or javax.* or if both start with it, perform standard comparison
-        // if only one starts with this prefix, it goes later
-        boolean firstClassHasJavaPrefix = firstClassName.startsWith(javaPrefix) || firstClassName.startsWith(javaxPrefix);
-        boolean secondClassHasJavaPrefix = secondClassName.startsWith(javaPrefix) || secondClassName.startsWith(javaxPrefix);
-        if (firstClassHasJavaPrefix) {
-            if (secondClassHasJavaPrefix) {
-                // both classes prefixed
-                return firstClassName.compareTo(secondClassName);
-            } else {
-                // first class prefixed, second class not
-                return 1;
-            }
-        } else {
-            if (secondClassHasJavaPrefix) {
-                // first class is not prefixed, second class is
-                return -1;
-            } else {
-                // neither class is prefixed
-                return firstClassName.compareTo(secondClassName);
-            }
-        }
+  @Override
+  public int compare(Class<?> o1, Class<?> o2) {
+    String firstClassName = o1.getName();
+    String secondClassName = o2.getName();
+    // if no class starts with java.* or javax.* or if both start with it,
+    // perform standard comparison if only one starts with this prefix, it goes
+    // later
+    boolean firstClassHasJavaPrefix = firstClassName.startsWith(javaPrefix) ||
+                                      firstClassName.startsWith(javaxPrefix);
+    boolean secondClassHasJavaPrefix = secondClassName.startsWith(javaPrefix) ||
+                                       secondClassName.startsWith(javaxPrefix);
+    if (firstClassHasJavaPrefix) {
+      if (secondClassHasJavaPrefix) {
+        // both classes prefixed
+        return firstClassName.compareTo(secondClassName);
+      } else {
+        // first class prefixed, second class not
+        return 1;
+      }
+    } else {
+      if (secondClassHasJavaPrefix) {
+        // first class is not prefixed, second class is
+        return -1;
+      } else {
+        // neither class is prefixed
+        return firstClassName.compareTo(secondClassName);
+      }
     }
+  }
 }

@@ -28,16 +28,12 @@ import javax.inject.Inject;
 @Priority(1)
 public class DecoratorOne implements SomeInterface {
 
-    @Delegate
-    @Inject
-    SomeInterface delegate;
+  @Delegate @Inject SomeInterface delegate;
 
-    @Inject
-    @Decorated
-    Bean<SomeInterface> metadata;
+  @Inject @Decorated Bean<SomeInterface> metadata;
 
-    @Override
-    public String ping() {
-        return metadata.getBeanClass().getSimpleName() + delegate.ping();
-    }
+  @Override
+  public String ping() {
+    return metadata.getBeanClass().getSimpleName() + delegate.ping();
+  }
 }

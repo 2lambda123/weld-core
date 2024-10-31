@@ -18,29 +18,25 @@ package org.jboss.weld.tests.event.async.stage;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.jboss.weld.executor.AbstractExecutorServices;
 import org.jboss.weld.executor.DaemonThreadFactory;
 
 public class CustomExecutorServices extends AbstractExecutorServices {
 
-    static final String PREFIX = "weld-worker-test";
+  static final String PREFIX = "weld-worker-test";
 
-    private final transient ExecutorService taskExecutor = Executors
-            .newSingleThreadExecutor(new DaemonThreadFactory(PREFIX));
+  private final transient ExecutorService taskExecutor =
+      Executors.newSingleThreadExecutor(new DaemonThreadFactory(PREFIX));
 
-    /**
-     * Provides access to the executor service used for asynchronous tasks.
-     *
-     * @return the ExecutorService for this manager
-     */
-    public ExecutorService getTaskExecutor() {
-        return taskExecutor;
-    }
+  /**
+   * Provides access to the executor service used for asynchronous tasks.
+   *
+   * @return the ExecutorService for this manager
+   */
+  public ExecutorService getTaskExecutor() { return taskExecutor; }
 
-    @Override
-    protected int getThreadPoolSize() {
-        return 1;
-    }
-
+  @Override
+  protected int getThreadPoolSize() {
+    return 1;
+  }
 }

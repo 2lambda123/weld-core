@@ -17,42 +17,39 @@
 
 package org.jboss.weld.tests.classDefining.a;
 
-import org.jboss.weld.tests.classDefining.c.AppScopedBean;
-import org.jboss.weld.tests.classDefining.b.BeanInterface;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import org.jboss.weld.tests.classDefining.b.BeanInterface;
+import org.jboss.weld.tests.classDefining.c.AppScopedBean;
 
 @ApplicationScoped
 public class BeanWithProducer {
 
-    @Inject
-    private AppScopedBean bean;
+  @Inject private AppScopedBean bean;
 
-    private int number;
-    private int number2;
+  private int number;
+  private int number2;
 
-    @Produces
-    @ApplicationScoped
-    public BeanInterface createTestInterface() {
-        return x -> number = x;
-    }
+  @Produces
+  @ApplicationScoped
+  public BeanInterface createTestInterface() {
+    return x -> number = x;
+  }
 
+  @Produces
+  @ApplicationScoped
+  public BeanInterface.NestedInterface createNestedInterface() {
+    return x -> number2 = x;
+  }
 
-    @Produces
-    @ApplicationScoped
-    public BeanInterface.NestedInterface createNestedInterface() {
-        return x -> number2 = x;
-    }
+  public int ping() {
+    bean.passNumberToInterface();
+    return number;
+  }
 
-    public int ping() {
-        bean.passNumberToInterface();
-        return number;
-    }
-
-    public int pingNested() {
-        bean.passNumberToNestedInterface();
-        return number2;
-    }
+  public int pingNested() {
+    bean.passNumberToNestedInterface();
+    return number2;
+  }
 }

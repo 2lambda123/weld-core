@@ -21,6 +21,4 @@ import javax.enterprise.inject.Alternative;
 
 @Alternative
 @Priority(100)
-public class NormalAlternative {
-	
-}
+public class NormalAlternative {}

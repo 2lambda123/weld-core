@@ -33,37 +33,40 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Simulates a situation where there is implicit discovery (javax.enterprise.inject.scan.implicit)
- * and no org.jboss.weld.se.archive.isolation and there are multiple archives on the classpath.
- * This triggers beans.xml merging.
- * <p>
- * The test controls deployment flow so as to be able to set system variables.
+ * Simulates a situation where there is implicit discovery
+ * (javax.enterprise.inject.scan.implicit) and no
+ * org.jboss.weld.se.archive.isolation and there are multiple archives on the
+ * classpath. This triggers beans.xml merging. <p> The test controls deployment
+ * flow so as to be able to set system variables.
  */
 @RunWith(Arquillian.class)
 public class BeansXmlMergingTest {
 
-    @Deployment
-    public static Archive<?> createTestArchive() {
-        JavaArchive archive01 = ShrinkWrap
-                .create(JavaArchive.class)
-                // no beans.xml here but still should be discovered
-                .addClasses(Foo.class);
-        JavaArchive archive02 = ShrinkWrap
-                .create(JavaArchive.class)
-                .addAsManifestResource(new BeansXml(BeanDiscoveryMode.ALL),
-                        "beans.xml")
-                .addClasses(Bar.class, BeansXmlMergingTest.class);
-        return ClassPath.builder().add(archive01).add(archive02).build();
-    }
+  @Deployment
+  public static Archive<?> createTestArchive() {
+    JavaArchive archive01 =
+        ShrinkWrap
+            .create(JavaArchive.class)
+            // no beans.xml here but still should be discovered
+            .addClasses(Foo.class);
+    JavaArchive archive02 =
+        ShrinkWrap.create(JavaArchive.class)
+            .addAsManifestResource(new BeansXml(BeanDiscoveryMode.ALL),
+                                   "beans.xml")
+            .addClasses(Bar.class, BeansXmlMergingTest.class);
+    return ClassPath.builder().add(archive01).add(archive02).build();
+  }
 
-    @Test
-    public void testArchivesCanBeDeployedAndDiscoveryWorks() {
-        try (WeldContainer container = new Weld()
-                .property(Weld.JAVAX_ENTERPRISE_INJECT_SCAN_IMPLICIT, Boolean.TRUE)
-                .property(Weld.ARCHIVE_ISOLATION_SYSTEM_PROPERTY, false)
-                .initialize()) {
-            assertTrue(container.select(Foo.class).isResolvable());
-            assertTrue(container.select(Bar.class).isResolvable());
-        }
+  @Test
+  public void testArchivesCanBeDeployedAndDiscoveryWorks() {
+    try (WeldContainer container =
+             new Weld()
+                 .property(Weld.JAVAX_ENTERPRISE_INJECT_SCAN_IMPLICIT,
+                           Boolean.TRUE)
+                 .property(Weld.ARCHIVE_ISOLATION_SYSTEM_PROPERTY, false)
+                 .initialize()) {
+      assertTrue(container.select(Foo.class).isResolvable());
+      assertTrue(container.select(Bar.class).isResolvable());
     }
+  }
 }

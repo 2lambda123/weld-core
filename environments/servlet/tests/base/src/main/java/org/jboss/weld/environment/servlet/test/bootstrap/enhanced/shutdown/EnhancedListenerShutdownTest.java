@@ -24,11 +24,12 @@ import static org.jboss.weld.environment.servlet.test.util.Deployments.toContext
 import static org.jboss.weld.environment.servlet.test.util.Deployments.toListener;
 import static org.junit.Assert.assertEquals;
 
+import com.gargoylesoftware.htmlunit.TextPage;
+import com.gargoylesoftware.htmlunit.WebClient;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
-
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -45,9 +46,6 @@ import org.jboss.weld.test.util.ActionSequence;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-
 /**
  *
  * @author Martin Kouba
@@ -57,66 +55,79 @@ import com.gargoylesoftware.htmlunit.WebClient;
 @RunWith(Arquillian.class)
 public class EnhancedListenerShutdownTest {
 
-    protected static final String TEST = "test";
-    protected static final String ASSERT = "assert";
+  protected static final String TEST = "test";
+  protected static final String ASSERT = "assert";
 
-    protected static final Asset TEST_WEB_XML = new StringAsset(DEFAULT_WEB_XML_START + DEFAULT_WEB_XML_BODY + toListener(TestListener.class.getName())
-            + toContextParam("WELD_CONTEXT_ID_KEY", TEST) + DEFAULT_WEB_XML_SUFFIX);
+  protected static final Asset TEST_WEB_XML = new StringAsset(
+      DEFAULT_WEB_XML_START + DEFAULT_WEB_XML_BODY +
+      toListener(TestListener.class.getName()) +
+      toContextParam("WELD_CONTEXT_ID_KEY", TEST) + DEFAULT_WEB_XML_SUFFIX);
 
-    protected static final Asset ASSERT_WEB_XML = new StringAsset(DEFAULT_WEB_XML_START + DEFAULT_WEB_XML_BODY + toContextParam("WELD_CONTEXT_ID_KEY", ASSERT)
-            + DEFAULT_WEB_XML_SUFFIX);
+  protected static final Asset ASSERT_WEB_XML = new StringAsset(
+      DEFAULT_WEB_XML_START + DEFAULT_WEB_XML_BODY +
+      toContextParam("WELD_CONTEXT_ID_KEY", ASSERT) + DEFAULT_WEB_XML_SUFFIX);
 
-    @Deployment(name = TEST, managed = false)
-    public static WebArchive createTestArchive() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "app-test.war").addAsWebInfResource(new BeansXml(), "beans.xml").setWebXML(TEST_WEB_XML);
-        war.addClasses(InitServlet.class, InfoClient.class, Foo.class, TestListener.class);
-        return war;
-    }
+  @Deployment(name = TEST, managed = false)
+  public static WebArchive createTestArchive() {
+    WebArchive war = ShrinkWrap.create(WebArchive.class, "app-test.war")
+                         .addAsWebInfResource(new BeansXml(), "beans.xml")
+                         .setWebXML(TEST_WEB_XML);
+    war.addClasses(InitServlet.class, InfoClient.class, Foo.class,
+                   TestListener.class);
+    return war;
+  }
 
-    @Deployment(name = ASSERT, managed = false)
-    public static WebArchive createAssertArchive() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "app-assert.war").addAsWebInfResource(new BeansXml(), "beans.xml").setWebXML(DEFAULT_WEB_XML);
-        war.addClasses(InfoServlet.class, ActionSequence.class);
-        return war;
-    }
+  @Deployment(name = ASSERT, managed = false)
+  public static WebArchive createAssertArchive() {
+    WebArchive war = ShrinkWrap.create(WebArchive.class, "app-assert.war")
+                         .addAsWebInfResource(new BeansXml(), "beans.xml")
+                         .setWebXML(DEFAULT_WEB_XML);
+    war.addClasses(InfoServlet.class, ActionSequence.class);
+    return war;
+  }
 
-    @ArquillianResource
-    Deployer deployer;
+  @ArquillianResource Deployer deployer;
 
-    /**
-     * This is not a real test method.
-     *
-     * @see #testEnhancedListenerDoesNotDestroyWeldIfListenerRegistered(URL)
-     */
-    @Test
-    @InSequence(1)
-    public void deployArchives() {
-        // In order to use @ArquillianResource URLs we need to deploy both test archives first
-        deployer.deploy(TEST);
-        deployer.deploy(ASSERT);
-    }
+  /**
+   * This is not a real test method.
+   *
+   * @see #testEnhancedListenerDoesNotDestroyWeldIfListenerRegistered(URL)
+   */
+  @Test
+  @InSequence(1)
+  public void deployArchives() {
+    // In order to use @ArquillianResource URLs we need to deploy both test
+    // archives first
+    deployer.deploy(TEST);
+    deployer.deploy(ASSERT);
+  }
 
-    @Test
-    @InSequence(2)
-    public void testEnhancedListenerNotDestroyingWeldIfListenerRegistered(@ArquillianResource @OperateOnDeployment(TEST) URL testContext,
-            @ArquillianResource @OperateOnDeployment(ASSERT) URL assertContext) throws IOException {
+  @Test
+  @InSequence(2)
+  public void testEnhancedListenerNotDestroyingWeldIfListenerRegistered(
+      @ArquillianResource @OperateOnDeployment(TEST) URL testContext,
+      @ArquillianResource @OperateOnDeployment(ASSERT) URL assertContext)
+      throws IOException {
 
-        // Init foo - set info archive deployment url
-        WebClient webClient = new WebClient();
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getPage(testContext + "init?url=" + URLEncoder.encode(assertContext.toExternalForm(), "UTF-8"));
+    // Init foo - set info archive deployment url
+    WebClient webClient = new WebClient();
+    webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    webClient.getPage(
+        testContext + "init?url=" +
+        URLEncoder.encode(assertContext.toExternalForm(), "UTF-8"));
 
-        // Undeploy TEST
-        deployer.undeploy(TEST);
+    // Undeploy TEST
+    deployer.undeploy(TEST);
 
-        // Test that Foo is destroyed after TestListener is notified
-        TextPage info = webClient.getPage(assertContext + "info?action=get");
-        List<String> data = ActionSequence.buildFromCsvData(info.getContent()).getData();
-        assertEquals(2, data.size());
-        assertEquals(TestListener.class.getSimpleName(), data.get(0));
-        assertEquals(Foo.class.getSimpleName(), data.get(1));
+    // Test that Foo is destroyed after TestListener is notified
+    TextPage info = webClient.getPage(assertContext + "info?action=get");
+    List<String> data =
+        ActionSequence.buildFromCsvData(info.getContent()).getData();
+    assertEquals(2, data.size());
+    assertEquals(TestListener.class.getSimpleName(), data.get(0));
+    assertEquals(Foo.class.getSimpleName(), data.get(1));
 
-        // Undeploy ASSERT
-        deployer.undeploy(ASSERT);
-    }
+    // Undeploy ASSERT
+    deployer.undeploy(ASSERT);
+  }
 }

@@ -17,25 +17,18 @@
 
 package org.jboss.weld.tests.classDefining.inherited;
 
-import org.jboss.weld.tests.classDefining.inherited.extending.MyInterface;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import org.jboss.weld.tests.classDefining.inherited.extending.MyInterface;
 
 @ApplicationScoped
 public class ConsumerBean {
 
-    @Inject
-    MyInterface bean;
+  @Inject MyInterface bean;
 
-    @Inject
-    AMuchBetterPrincipal principal;
+  @Inject AMuchBetterPrincipal principal;
 
-    public MyInterface getProducedInterfaceBean() {
-        return bean;
-    }
+  public MyInterface getProducedInterfaceBean() { return bean; }
 
-    public AMuchBetterPrincipal getPrincipal() {
-        return principal;
-    }
+  public AMuchBetterPrincipal getPrincipal() { return principal; }
 }

@@ -20,57 +20,58 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import org.jboss.weld.logging.BootstrapLogger;
 
 /**
- * Implementation of {@link ExtendedExecutorServices} that uses a fixed thread pool. However threads are terminated if no new tasks arrive within the keep-alive time.
+ * Implementation of {@link ExtendedExecutorServices} that uses a fixed thread
+ * pool. However threads are terminated if no new tasks arrive within the
+ * keep-alive time.
  *
  * @author Martin Kouba
  */
-public class TimingOutFixedThreadPoolExecutorServices extends AbstractExecutorServices {
+public class TimingOutFixedThreadPoolExecutorServices
+    extends AbstractExecutorServices {
 
-    private final int threadPoolSize;
-    /**
-     * Keep-alive time in seconds
-     */
-    private long keepAliveTime;
+  private final int threadPoolSize;
+  /**
+   * Keep-alive time in seconds
+   */
+  private long keepAliveTime;
 
-    private final ThreadPoolExecutor executor;
+  private final ThreadPoolExecutor executor;
 
-    public TimingOutFixedThreadPoolExecutorServices(int threadPoolSize, long keepAliveTime) {
+  public TimingOutFixedThreadPoolExecutorServices(int threadPoolSize,
+                                                  long keepAliveTime) {
 
-        this.threadPoolSize = threadPoolSize;
-        this.keepAliveTime = keepAliveTime;
+    this.threadPoolSize = threadPoolSize;
+    this.keepAliveTime = keepAliveTime;
 
-        this.executor = new ThreadPoolExecutor(threadPoolSize, threadPoolSize,
-                keepAliveTime, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(),
-                new DaemonThreadFactory("weld-worker-"));
-        // Terminate threads if no new tasks arrive within the keep-alive time
-        this.executor.allowCoreThreadTimeOut(true);
+    this.executor = new ThreadPoolExecutor(
+        threadPoolSize, threadPoolSize, keepAliveTime, TimeUnit.SECONDS,
+        new LinkedBlockingQueue<Runnable>(),
+        new DaemonThreadFactory("weld-worker-"));
+    // Terminate threads if no new tasks arrive within the keep-alive time
+    this.executor.allowCoreThreadTimeOut(true);
 
-        BootstrapLogger.LOG.threadsInUse(threadPoolSize);
-    }
+    BootstrapLogger.LOG.threadsInUse(threadPoolSize);
+  }
 
-    public int getPoolSize() {
-        return executor.getPoolSize();
-    }
+  public int getPoolSize() { return executor.getPoolSize(); }
 
-    @Override
-    public ExecutorService getTaskExecutor() {
-        return executor;
-    }
+  @Override
+  public ExecutorService getTaskExecutor() {
+    return executor;
+  }
 
-    @Override
-    protected int getThreadPoolSize() {
-        return threadPoolSize;
-    }
+  @Override
+  protected int getThreadPoolSize() {
+    return threadPoolSize;
+  }
 
-    @Override
-    public String toString() {
-        return String.format("TimingOutFixedThreadPoolExecutorServices [threadPoolSize=%s, keepAliveTime=%s]", threadPoolSize,
-                keepAliveTime);
-    }
-
+  @Override
+  public String toString() {
+    return String.format("TimingOutFixedThreadPoolExecutorServices " +
+                         "[threadPoolSize=%s, keepAliveTime=%s]",
+                         threadPoolSize, keepAliveTime);
+  }
 }

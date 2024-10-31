@@ -22,8 +22,8 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class FooBean implements InterfaceWithDefaultMethod {
 
-    @Override
-    public String decoratedMethod() {
-        return FooBean.class.getSimpleName();
-    }
+  @Override
+  public String decoratedMethod() {
+    return FooBean.class.getSimpleName();
+  }
 }

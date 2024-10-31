@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
@@ -40,71 +39,112 @@ import javax.enterprise.util.TypeLiteral;
  */
 public class BuilderExtension implements Extension {
 
-    static final AtomicBoolean DISPOSED = new AtomicBoolean(false);
+  static final AtomicBoolean DISPOSED = new AtomicBoolean(false);
 
-    public void processAnnotatedType(@Observes ProcessAnnotatedType<? extends VetoedBean> event) {
-        event.veto();
-    }
+  public void processAnnotatedType(
+      @Observes ProcessAnnotatedType<? extends VetoedBean> event) {
+    event.veto();
+  }
 
-    @SuppressWarnings("serial")
-    public void afterBeanDiscovery(@Observes AfterBeanDiscovery event, BeanManager beanManager) {
+  @SuppressWarnings("serial")
+  public void afterBeanDiscovery(@Observes AfterBeanDiscovery event,
+                                 BeanManager beanManager) {
 
-        AnnotatedType<Foo> annotatedType = beanManager.createAnnotatedType(Foo.class);
+    AnnotatedType<Foo> annotatedType =
+        beanManager.createAnnotatedType(Foo.class);
 
-        // Read from bean attributes, change the name and remove @Model stereotype
-        // Note that we have to set the scope manually as it's initialized to @RequestScoped through the bean attributes
-        event.addBean().beanClass(Foo.class).read(beanManager.createBeanAttributes(annotatedType)).name("bar")
-                .stereotypes(Collections.emptySet()).scope(Dependent.class).produceWith((i) -> {
-                    Foo foo = new Foo();
-                    foo.postConstruct();
-                    return foo;
-                });
+    // Read from bean attributes, change the name and remove @Model stereotype
+    // Note that we have to set the scope manually as it's initialized to
+    // @RequestScoped through the bean attributes
+    event.addBean()
+        .beanClass(Foo.class)
+        .read(beanManager.createBeanAttributes(annotatedType))
+        .name("bar")
+        .stereotypes(Collections.emptySet())
+        .scope(Dependent.class)
+        .produceWith((i) -> {
+          Foo foo = new Foo();
+          foo.postConstruct();
+          return foo;
+        });
 
-        // Read from AT, add qualifier, set id
-        event.addBean().read(annotatedType).id("BAZinga").addQualifier(Juicy.Literal.INSTANCE);
+    // Read from AT, add qualifier, set id
+    event.addBean()
+        .read(annotatedType)
+        .id("BAZinga")
+        .addQualifier(Juicy.Literal.INSTANCE);
 
-        // Read from AT, set the scope
-        event.addBean().read(beanManager.createAnnotatedType(Bar.class)).scope(Dependent.class);
+    // Read from AT, set the scope
+    event.addBean()
+        .read(beanManager.createAnnotatedType(Bar.class))
+        .scope(Dependent.class);
 
-        // Test simple produceWith callback
-        event.addBean().addType(Integer.class).addQualifier(Random.Literal.INSTANCE)
-                .produceWith((i) -> {
-                    i.select(DependentBean.class).get(); // create dependent instance
-                    return new java.util.Random().nextInt(1000);
-                })
-                .disposeWith((beanInstance, instance) -> {
-                    instance.select(DependentBean.class).get(); // create dependent instance
-                    DISPOSED.set(true);
-                });
+    // Test simple produceWith callback
+    event.addBean()
+        .addType(Integer.class)
+        .addQualifier(Random.Literal.INSTANCE)
+        .produceWith((i) -> {
+          i.select(DependentBean.class).get(); // create dependent instance
+          return new java.util.Random().nextInt(1000);
+        })
+        .disposeWith((beanInstance, instance) -> {
+          instance.select(DependentBean.class)
+              .get(); // create dependent instance
+          DISPOSED.set(true);
+        });
 
-        // Test produceWith callback with Instance<Object> param
-        event.addBean().addType(Long.class).addQualifier(AnotherRandom.Literal.INSTANCE)
-                .produceWith((i) -> i.select(Foo.class, Juicy.Literal.INSTANCE).get().getId() * 2);
+    // Test produceWith callback with Instance<Object> param
+    event.addBean()
+        .addType(Long.class)
+        .addQualifier(AnotherRandom.Literal.INSTANCE)
+        .produceWith(
+            (i)
+                -> i.select(Foo.class, Juicy.Literal.INSTANCE).get().getId() *
+                       2);
 
-        // Test TypeLiteral
-        List<String> list = new ArrayList<String>();
-        list.add("FOO");
-        event.addBean().addType(new TypeLiteral<List<String>>() {
-        }).addQualifier(Juicy.Literal.INSTANCE).produceWith((i) -> list);
+    // Test TypeLiteral
+    List<String> list = new ArrayList<String>();
+    list.add("FOO");
+    event.addBean()
+        .addType(new TypeLiteral<List<String>>() {})
+        .addQualifier(Juicy.Literal.INSTANCE)
+        .produceWith((i) -> list);
 
-        // Test transitive type closure
-        event.addBean().addTransitiveTypeClosure(Foo.class).addQualifier(Random.Literal.INSTANCE)
-                .produceWith((i) -> new Foo(-1l));
+    // Test transitive type closure
+    event.addBean()
+        .addTransitiveTypeClosure(Foo.class)
+        .addQualifier(Random.Literal.INSTANCE)
+        .produceWith((i) -> new Foo(-1l));
 
-        // Test default qualifiers
-        event.addBean().addType(Configuration.class).produceWith((i) -> new Configuration(1));
+    // Test default qualifiers
+    event.addBean()
+        .addType(Configuration.class)
+        .produceWith((i) -> new Configuration(1));
 
-        // Test default scopes
-        event.addBean().addQualifier(Bla.Literal.of("dependent")).addType(Integer.class).createWith((ctx) -> 1);
-        event.addBean().addQualifier(Bla.Literal.of("model")).addStereotype(Model.class).addType(Integer.class).createWith((ctx) -> 2);
-        event.addBean().addQualifier(Bla.Literal.of("more")).addStereotype(Model.class).addStereotype(SuperCoolStereotype.class).addType(Integer.class).createWith((ctx) -> 3);
+    // Test default scopes
+    event.addBean()
+        .addQualifier(Bla.Literal.of("dependent"))
+        .addType(Integer.class)
+        .createWith((ctx) -> 1);
+    event.addBean()
+        .addQualifier(Bla.Literal.of("model"))
+        .addStereotype(Model.class)
+        .addType(Integer.class)
+        .createWith((ctx) -> 2);
+    event.addBean()
+        .addQualifier(Bla.Literal.of("more"))
+        .addStereotype(Model.class)
+        .addStereotype(SuperCoolStereotype.class)
+        .addType(Integer.class)
+        .createWith((ctx) -> 3);
 
-        // add a bean testing that when a bean has @Named and @Any, @Default will be added automatically
-        event.addBean()
-                .beanClass(String.class)
-                .addType(String.class)
-                .addQualifiers(NamedLiteral.of("string"), Any.Literal.INSTANCE)
-                .createWith(a -> "foo")
-                .scope(ApplicationScoped.class);
-    }
+    // add a bean testing that when a bean has @Named and @Any, @Default will be
+    // added automatically
+    event.addBean()
+        .beanClass(String.class)
+        .addType(String.class)
+        .addQualifiers(NamedLiteral.of("string"), Any.Literal.INSTANCE)
+        .createWith(a -> "foo")
+        .scope(ApplicationScoped.class);
+  }
 }

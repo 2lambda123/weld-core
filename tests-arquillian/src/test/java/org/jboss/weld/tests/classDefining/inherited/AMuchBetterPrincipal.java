@@ -22,5 +22,4 @@ import java.security.Principal;
 /**
  * Naming is intentional, this class alphabetically precedes Principal
  */
-public interface AMuchBetterPrincipal extends Principal {
-}
+public interface AMuchBetterPrincipal extends Principal {}
