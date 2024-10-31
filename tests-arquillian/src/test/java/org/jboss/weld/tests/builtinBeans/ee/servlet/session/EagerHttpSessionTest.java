@@ -18,10 +18,10 @@ package org.jboss.weld.tests.builtinBeans.ee.servlet.session;
 
 import static org.junit.Assert.assertFalse;
 
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.WebClient;
 import java.net.URL;
-
 import javax.servlet.http.HttpSession;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -34,11 +34,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-
 /**
- * Test that an invocation of an injected {@link HttpSession} (provided by {@link org.jboss.weld.module.web.HttpSessionBean}) triggers session creation.
+ * Test that an invocation of an injected {@link HttpSession} (provided by
+ * {@link org.jboss.weld.module.web.HttpSessionBean}) triggers session creation.
  *
  * @author Martin Kouba
  * @see WELD-2346
@@ -47,26 +45,24 @@ import com.gargoylesoftware.htmlunit.WebClient;
 @Category(Integration.class)
 public class EagerHttpSessionTest {
 
-    @ArquillianResource
-    private URL url;
+  @ArquillianResource private URL url;
 
-    @Deployment(testable = false)
-    public static WebArchive createTestArchive() {
-        return ShrinkWrap
-                .create(WebArchive.class,
-                        Utils.getDeploymentNameAsHash(EagerHttpSessionTest.class,
-                                Utils.ARCHIVE_TYPE.WAR))
-                .addClasses(TestServlet.class, EagerHttpSessionTest.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
+  @Deployment(testable = false)
+  public static WebArchive createTestArchive() {
+    return ShrinkWrap
+        .create(WebArchive.class,
+                Utils.getDeploymentNameAsHash(EagerHttpSessionTest.class,
+                                              Utils.ARCHIVE_TYPE.WAR))
+        .addClasses(TestServlet.class, EagerHttpSessionTest.class)
+        .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+  }
 
-    @Test
-    public void testHttpSession() throws Exception {
-        WebClient client = new WebClient();
-        client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        Page page = client.getPage(url + "/test");
-        String id = page.getWebResponse().getContentAsString();
-        assertFalse(id.isEmpty());
-    }
-
+  @Test
+  public void testHttpSession() throws Exception {
+    WebClient client = new WebClient();
+    client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    Page page = client.getPage(url + "/test");
+    String id = page.getWebResponse().getContentAsString();
+    assertFalse(id.isEmpty());
+  }
 }

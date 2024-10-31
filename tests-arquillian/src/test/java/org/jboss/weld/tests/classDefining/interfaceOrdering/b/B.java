@@ -21,5 +21,5 @@ import org.jboss.weld.tests.classDefining.interfaceOrdering.a.A;
 
 public interface B extends A {
 
-    String pingB();
+  String pingB();
 }

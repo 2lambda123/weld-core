@@ -19,25 +19,21 @@ package org.jboss.weld.tests.extensions.lifecycle.atd.minvaluepriority;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterTypeDiscovery;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 
-
 public class AfterTypeDiscoveryObserver implements Extension {
 
-    private List<Class<?>> initialAlternatives = null;
+  private List<Class<?>> initialAlternatives = null;
 
-    public void observeAfterTypeDiscovery(@Observes AfterTypeDiscovery event, BeanManager beanManager) {
+  public void observeAfterTypeDiscovery(@Observes AfterTypeDiscovery event,
+                                        BeanManager beanManager) {
 
-        initialAlternatives = Collections.unmodifiableList(new ArrayList<Class<?>>(event.getAlternatives()));
+    initialAlternatives = Collections.unmodifiableList(
+        new ArrayList<Class<?>>(event.getAlternatives()));
+  }
 
-    }
-
-    public List<Class<?>> getInitialAlternatives() {
-        return initialAlternatives;
-    }
-
+  public List<Class<?>> getInitialAlternatives() { return initialAlternatives; }
 }

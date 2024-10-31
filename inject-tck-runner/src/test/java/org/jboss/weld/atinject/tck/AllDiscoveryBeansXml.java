@@ -17,60 +17,60 @@
 
 package org.jboss.weld.atinject.tck;
 
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import org.jboss.weld.bootstrap.spi.BeanDiscoveryMode;
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.bootstrap.spi.Scanning;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-
 public class AllDiscoveryBeansXml implements BeansXml {
-    public static final AllDiscoveryBeansXml INSTANCE = new AllDiscoveryBeansXml();
+  public static final AllDiscoveryBeansXml INSTANCE =
+      new AllDiscoveryBeansXml();
 
-    @Override
-    public List<Metadata<String>> getEnabledAlternativeStereotypes() {
-        return Collections.emptyList();
-    }
+  @Override
+  public List<Metadata<String>> getEnabledAlternativeStereotypes() {
+    return Collections.emptyList();
+  }
 
-    @Override
-    public List<Metadata<String>> getEnabledAlternativeClasses() {
-        return Collections.emptyList();
-    }
+  @Override
+  public List<Metadata<String>> getEnabledAlternativeClasses() {
+    return Collections.emptyList();
+  }
 
-    @Override
-    public List<Metadata<String>> getEnabledDecorators() {
-        return Collections.emptyList();
-    }
+  @Override
+  public List<Metadata<String>> getEnabledDecorators() {
+    return Collections.emptyList();
+  }
 
-    @Override
-    public List<Metadata<String>> getEnabledInterceptors() {
-        return Collections.emptyList();
-    }
+  @Override
+  public List<Metadata<String>> getEnabledInterceptors() {
+    return Collections.emptyList();
+  }
 
-    @Override
-    public Scanning getScanning() {
-        return Scanning.EMPTY_SCANNING;
-    }
+  @Override
+  public Scanning getScanning() {
+    return Scanning.EMPTY_SCANNING;
+  }
 
-    @Override
-    public URL getUrl() {
-        return null;
-    }
+  @Override
+  public URL getUrl() {
+    return null;
+  }
 
-    @Override
-    public BeanDiscoveryMode getBeanDiscoveryMode() {
-        return BeanDiscoveryMode.ALL;
-    }
+  @Override
+  public BeanDiscoveryMode getBeanDiscoveryMode() {
+    return BeanDiscoveryMode.ALL;
+  }
 
-    @Override
-    public String getVersion() {
-        return null;
-    }
+  @Override
+  public String getVersion() {
+    return null;
+  }
 
-    @Override
-    public boolean isTrimmed() {
-        return false;
-    }
+  @Override
+  public boolean isTrimmed() {
+    return false;
+  }
 }

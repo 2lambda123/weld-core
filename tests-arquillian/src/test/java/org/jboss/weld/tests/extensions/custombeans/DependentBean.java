@@ -22,19 +22,18 @@ import javax.enterprise.context.Dependent;
 
 /**
  * Serves as a counter of how many times a pre-destroy was called.
- * Initialized only from within extension's produceWith and disposeWith methods via Instance
+ * Initialized only from within extension's produceWith and disposeWith methods
+ * via Instance
  */
 @Dependent
 public class DependentBean {
 
-    public static int TIMES_DESTROY_INVOKED = 0;
+  public static int TIMES_DESTROY_INVOKED = 0;
 
-    public static void resetCounter() {
-        TIMES_DESTROY_INVOKED = 0;
-    }
+  public static void resetCounter() { TIMES_DESTROY_INVOKED = 0; }
 
-    @PreDestroy
-    public void destroy() {
-        TIMES_DESTROY_INVOKED++;
-    }
+  @PreDestroy
+  public void destroy() {
+    TIMES_DESTROY_INVOKED++;
+  }
 }

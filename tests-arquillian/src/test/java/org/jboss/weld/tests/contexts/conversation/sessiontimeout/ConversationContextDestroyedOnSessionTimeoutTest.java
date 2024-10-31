@@ -18,10 +18,11 @@ package org.jboss.weld.tests.contexts.conversation.sessiontimeout;
 
 import static org.junit.Assert.assertEquals;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebClient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -35,12 +36,9 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-
 /**
- * This test only verifies that PreDestroy callback is called correctly on a conversation scoped bean when the HTTP session
- * times out.
+ * This test only verifies that PreDestroy callback is called correctly on a
+ * conversation scoped bean when the HTTP session times out.
  *
  * @author Martin Kouba
  * @author Matej Novotny
@@ -49,30 +47,42 @@ import com.gargoylesoftware.htmlunit.WebClient;
 @RunWith(Arquillian.class)
 public class ConversationContextDestroyedOnSessionTimeoutTest {
 
-    @ArquillianResource
-    private URL contextPath;
+  @ArquillianResource private URL contextPath;
 
-    @Deployment(testable = false)
-    public static WebArchive createTestArchive() {
-        return ShrinkWrap.create(WebArchive.class, Utils.getDeploymentNameAsHash(ConversationContextDestroyedOnSessionTimeoutTest.class, Utils.ARCHIVE_TYPE.WAR)).addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addClasses(Foo.class, TestServlet.class, ActionSequence.class, SessionListener.class);
-    }
+  @Deployment(testable = false)
+  public static WebArchive createTestArchive() {
+    return ShrinkWrap
+        .create(WebArchive.class,
+                Utils.getDeploymentNameAsHash(
+                    ConversationContextDestroyedOnSessionTimeoutTest.class,
+                    Utils.ARCHIVE_TYPE.WAR))
+        .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+        .addClasses(Foo.class, TestServlet.class, ActionSequence.class,
+                    SessionListener.class);
+  }
 
-    @Test
-    public void testConversationContextDestroyedCorrectly() throws FailingHttpStatusCodeException, MalformedURLException,
-            IOException, InterruptedException {
-        WebClient client = new WebClient();
-        client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        String cid = client.getPage(contextPath + "/init").getWebResponse().getContentAsString();
-        ActionSequence sequence = new ActionSequence();
-        sequence.add(Foo.class.getSimpleName() + "init");
-        sequence.add(Foo.class.getSimpleName() + "ping");
-        sequence.add(SessionListener.class.getSimpleName() + "destroyed");
-        sequence.add(Foo.class.getSimpleName() + "destroy");
-        // we need to wait over 1s for session to timeout and then attempt to send another request
-        Thread.sleep(1200L);
-        assertEquals(sequence.dataToCsv(), client.getPage(contextPath + "/test" + "?cid=" + cid).getWebResponse()
-                .getContentAsString().trim());
-    }
-
+  @Test
+  public void testConversationContextDestroyedCorrectly()
+      throws FailingHttpStatusCodeException, MalformedURLException, IOException,
+             InterruptedException {
+    WebClient client = new WebClient();
+    client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    String cid = client.getPage(contextPath + "/init")
+                     .getWebResponse()
+                     .getContentAsString();
+    ActionSequence sequence = new ActionSequence();
+    sequence.add(Foo.class.getSimpleName() + "init");
+    sequence.add(Foo.class.getSimpleName() + "ping");
+    sequence.add(SessionListener.class.getSimpleName() + "destroyed");
+    sequence.add(Foo.class.getSimpleName() + "destroy");
+    // we need to wait over 1s for session to timeout and then attempt to send
+    // another request
+    Thread.sleep(1200L);
+    assertEquals(sequence.dataToCsv(), client
+                                           .getPage(contextPath + "/test"
+                                                    + "?cid=" + cid)
+                                           .getWebResponse()
+                                           .getContentAsString()
+                                           .trim());
+  }
 }

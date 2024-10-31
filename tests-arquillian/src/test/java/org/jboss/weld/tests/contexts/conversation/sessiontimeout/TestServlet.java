@@ -18,7 +18,6 @@
 package org.jboss.weld.tests.contexts.conversation.sessiontimeout;
 
 import java.io.IOException;
-
 import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -26,32 +25,30 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.jboss.weld.test.util.ActionSequence;
 
 @SuppressWarnings("serial")
 @WebServlet(urlPatterns = "/*")
 public class TestServlet extends HttpServlet {
 
-    @Inject
-    private Foo foo;
+  @Inject private Foo foo;
 
-    @Inject
-    private Conversation conversation;
+  @Inject private Conversation conversation;
 
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/plain");
-        if ("/init".equals(req.getPathInfo())) {
-            ActionSequence.reset();
-            req.getSession(true);
-            req.getSession().setMaxInactiveInterval(1);
-            conversation.begin();
-            foo.ping();
-            resp.getWriter().println(conversation.getId());
-        } else {
-            // we waited for >1 sec so session should timeout
-            resp.getWriter().println(ActionSequence.getSequence().dataToCsv());
-        }
+  @Override
+  protected void service(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
+    resp.setContentType("text/plain");
+    if ("/init".equals(req.getPathInfo())) {
+      ActionSequence.reset();
+      req.getSession(true);
+      req.getSession().setMaxInactiveInterval(1);
+      conversation.begin();
+      foo.ping();
+      resp.getWriter().println(conversation.getId());
+    } else {
+      // we waited for >1 sec so session should timeout
+      resp.getWriter().println(ActionSequence.getSequence().dataToCsv());
     }
+  }
 }

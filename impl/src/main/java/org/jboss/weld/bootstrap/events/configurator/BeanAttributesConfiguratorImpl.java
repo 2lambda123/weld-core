@@ -23,7 +23,6 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
@@ -31,7 +30,6 @@ import javax.enterprise.inject.spi.BeanAttributes;
 import javax.enterprise.inject.spi.configurator.BeanAttributesConfigurator;
 import javax.enterprise.util.TypeLiteral;
 import javax.inject.Named;
-
 import org.jboss.weld.bean.attributes.ImmutableBeanAttributes;
 import org.jboss.weld.logging.BeanLogger;
 import org.jboss.weld.logging.BeanManagerLogger;
@@ -50,234 +48,245 @@ import org.jboss.weld.util.reflection.HierarchyDiscovery;
  *
  * @param <T>
  */
-public class BeanAttributesConfiguratorImpl<T> implements BeanAttributesConfigurator<T>, Configurator<BeanAttributes<T>> {
+public class BeanAttributesConfiguratorImpl<T>
+    implements BeanAttributesConfigurator<T>, Configurator<BeanAttributes<T>> {
 
-    private final BeanManagerImpl beanManager;
+  private final BeanManagerImpl beanManager;
 
-    private String name;
+  private String name;
 
-    final Set<Annotation> qualifiers;
+  final Set<Annotation> qualifiers;
 
-    private Class<? extends Annotation> scope;
+  private Class<? extends Annotation> scope;
 
-    private final Set<Class<? extends Annotation>> stereotypes;
+  private final Set<Class<? extends Annotation>> stereotypes;
 
-    final Set<Type> types;
+  final Set<Type> types;
 
-    private boolean isAlternative;
+  private boolean isAlternative;
 
-    public BeanAttributesConfiguratorImpl(BeanManagerImpl beanManager) {
-        this.beanManager = beanManager;
-        this.qualifiers = new HashSet<Annotation>();
-        this.types = new HashSet<Type>();
-        this.types.add(Object.class);
-        this.stereotypes = new HashSet<Class<? extends Annotation>>();
+  public BeanAttributesConfiguratorImpl(BeanManagerImpl beanManager) {
+    this.beanManager = beanManager;
+    this.qualifiers = new HashSet<Annotation>();
+    this.types = new HashSet<Type>();
+    this.types.add(Object.class);
+    this.stereotypes = new HashSet<Class<? extends Annotation>>();
+  }
+
+  /**
+   *
+   * @param beanAttributes
+   */
+  public BeanAttributesConfiguratorImpl(BeanAttributes<T> beanAttributes,
+                                        BeanManagerImpl beanManager) {
+    this(beanManager);
+    read(beanAttributes);
+  }
+
+  public BeanAttributesConfigurator<T> read(BeanAttributes<?> beanAttributes) {
+    checkArgumentNotNull(beanAttributes);
+    name(beanAttributes.getName());
+    qualifiers(beanAttributes.getQualifiers());
+    scope(beanAttributes.getScope());
+    stereotypes(beanAttributes.getStereotypes());
+    types(beanAttributes.getTypes());
+    alternative(beanAttributes.isAlternative());
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> addType(Type type) {
+    checkArgumentNotNull(type);
+    this.types.add(type);
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> addType(TypeLiteral<?> typeLiteral) {
+    checkArgumentNotNull(typeLiteral);
+    this.types.add(typeLiteral.getType());
+    return null;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> addTypes(Type... types) {
+    checkArgumentNotNull(types);
+    Collections.addAll(this.types, types);
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> addTypes(Set<Type> types) {
+    checkArgumentNotNull(types);
+    this.types.addAll(types);
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> addTransitiveTypeClosure(Type type) {
+    checkArgumentNotNull(type);
+    this.types.addAll(Beans.getLegalBeanTypes(
+        new HierarchyDiscovery(type).getTypeClosure(), type));
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> types(Type... types) {
+    this.types.clear();
+    return addTypes(types);
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> types(Set<Type> types) {
+    this.types.clear();
+    return addTypes(types);
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T>
+  scope(Class<? extends Annotation> scope) {
+    checkArgumentNotNull(scope);
+    this.scope = scope;
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> addQualifier(Annotation qualifier) {
+    checkArgumentNotNull(qualifier);
+    removeDefaultQualifierIfNeeded(qualifier);
+    qualifiers.add(qualifier);
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> addQualifiers(Annotation... qualifiers) {
+    checkArgumentNotNull(qualifiers);
+    for (Annotation annotation : qualifiers) {
+      removeDefaultQualifierIfNeeded(annotation);
     }
+    Collections.addAll(this.qualifiers, qualifiers);
+    return this;
+  }
 
-    /**
-     *
-     * @param beanAttributes
-     */
-    public BeanAttributesConfiguratorImpl(BeanAttributes<T> beanAttributes, BeanManagerImpl beanManager) {
-        this(beanManager);
-        read(beanAttributes);
+  @Override
+  public BeanAttributesConfigurator<T>
+  addQualifiers(Set<Annotation> qualifiers) {
+    checkArgumentNotNull(qualifiers);
+    for (Annotation annotation : qualifiers) {
+      removeDefaultQualifierIfNeeded(annotation);
     }
+    this.qualifiers.addAll(qualifiers);
+    return this;
+  }
 
-    public BeanAttributesConfigurator<T> read(BeanAttributes<?> beanAttributes) {
-        checkArgumentNotNull(beanAttributes);
-        name(beanAttributes.getName());
-        qualifiers(beanAttributes.getQualifiers());
-        scope(beanAttributes.getScope());
-        stereotypes(beanAttributes.getStereotypes());
-        types(beanAttributes.getTypes());
-        alternative(beanAttributes.isAlternative());
-        return this;
+  @Override
+  public BeanAttributesConfigurator<T> qualifiers(Annotation... qualifiers) {
+    this.qualifiers.clear();
+    return addQualifiers(qualifiers);
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> qualifiers(Set<Annotation> qualifiers) {
+    this.qualifiers.clear();
+    return addQualifiers(qualifiers);
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T>
+  addStereotype(Class<? extends Annotation> stereotype) {
+    checkArgumentNotNull(stereotype);
+    this.stereotypes.add(stereotype);
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T>
+  addStereotypes(Set<Class<? extends Annotation>> stereotypes) {
+    checkArgumentNotNull(stereotypes);
+    this.stereotypes.addAll(stereotypes);
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T>
+  stereotypes(Set<Class<? extends Annotation>> stereotypes) {
+    this.stereotypes.clear();
+    return addStereotypes(stereotypes);
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> name(String name) {
+    this.name = name;
+    return this;
+  }
+
+  @Override
+  public BeanAttributesConfigurator<T> alternative(boolean alternative) {
+    this.isAlternative = alternative;
+    return this;
+  }
+
+  @Override
+  public BeanAttributes<T> complete() {
+    return new ImmutableBeanAttributes<T>(
+        ImmutableSet.copyOf(stereotypes), isAlternative, name,
+        initQualifiers(qualifiers), ImmutableSet.copyOf(types), initScope());
+  }
+
+  private void removeDefaultQualifierIfNeeded(Annotation qualifier) {
+    if (!qualifier.annotationType().equals(Named.class)) {
+      qualifiers.remove(Default.Literal.INSTANCE);
     }
+  }
 
-    @Override
-    public BeanAttributesConfigurator<T> addType(Type type) {
-        checkArgumentNotNull(type);
-        this.types.add(type);
-        return this;
+  private Class<? extends Annotation> initScope() {
+    if (scope != null) {
+      return scope;
     }
-
-    @Override
-    public BeanAttributesConfigurator<T> addType(TypeLiteral<?> typeLiteral) {
-        checkArgumentNotNull(typeLiteral);
-        this.types.add(typeLiteral.getType());
-        return null;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> addTypes(Type... types) {
-        checkArgumentNotNull(types);
-        Collections.addAll(this.types, types);
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> addTypes(Set<Type> types) {
-        checkArgumentNotNull(types);
-        this.types.addAll(types);
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> addTransitiveTypeClosure(Type type) {
-        checkArgumentNotNull(type);
-        this.types.addAll(Beans.getLegalBeanTypes(new HierarchyDiscovery(type).getTypeClosure(), type));
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> types(Type... types) {
-        this.types.clear();
-        return addTypes(types);
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> types(Set<Type> types) {
-        this.types.clear();
-        return addTypes(types);
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> scope(Class<? extends Annotation> scope) {
-        checkArgumentNotNull(scope);
-        this.scope = scope;
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> addQualifier(Annotation qualifier) {
-        checkArgumentNotNull(qualifier);
-        removeDefaultQualifierIfNeeded(qualifier);
-        qualifiers.add(qualifier);
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> addQualifiers(Annotation... qualifiers) {
-        checkArgumentNotNull(qualifiers);
-        for (Annotation annotation : qualifiers) {
-            removeDefaultQualifierIfNeeded(annotation);
-        }
-        Collections.addAll(this.qualifiers, qualifiers);
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> addQualifiers(Set<Annotation> qualifiers) {
-        checkArgumentNotNull(qualifiers);
-        for (Annotation annotation : qualifiers) {
-            removeDefaultQualifierIfNeeded(annotation);
-        }
-        this.qualifiers.addAll(qualifiers);
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> qualifiers(Annotation... qualifiers) {
-        this.qualifiers.clear();
-        return addQualifiers(qualifiers);
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> qualifiers(Set<Annotation> qualifiers) {
-        this.qualifiers.clear();
-        return addQualifiers(qualifiers);
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> addStereotype(Class<? extends Annotation> stereotype) {
-        checkArgumentNotNull(stereotype);
-        this.stereotypes.add(stereotype);
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> addStereotypes(Set<Class<? extends Annotation>> stereotypes) {
-        checkArgumentNotNull(stereotypes);
-        this.stereotypes.addAll(stereotypes);
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> stereotypes(Set<Class<? extends Annotation>> stereotypes) {
-        this.stereotypes.clear();
-        return addStereotypes(stereotypes);
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    @Override
-    public BeanAttributesConfigurator<T> alternative(boolean alternative) {
-        this.isAlternative = alternative;
-        return this;
-    }
-
-    @Override
-    public BeanAttributes<T> complete() {
-        return new ImmutableBeanAttributes<T>(ImmutableSet.copyOf(stereotypes), isAlternative, name, initQualifiers(qualifiers), ImmutableSet.copyOf(types),
-                initScope());
-    }
-
-    private void removeDefaultQualifierIfNeeded(Annotation qualifier) {
-        if (!qualifier.annotationType().equals(Named.class)) {
-            qualifiers.remove(Default.Literal.INSTANCE);
-        }
-    }
-
-    private Class<? extends Annotation> initScope() {
-        if (scope != null) {
-            return scope;
-        }
-        if (!stereotypes.isEmpty()) {
-            MetaAnnotationStore metaAnnotationStore = beanManager.getServices().get(MetaAnnotationStore.class);
-            Set<Annotation> possibleScopeTypes = new HashSet<>();
-            for (Class<? extends Annotation> stereotype : stereotypes) {
-                StereotypeModel<? extends Annotation> model = metaAnnotationStore.getStereotype(stereotype);
-                if (model.isValid()) {
-                    possibleScopeTypes.add(model.getDefaultScopeType());
-                } else {
-                    throw BeanManagerLogger.LOG.notStereotype(stereotype);
-                }
-            }
-            if (possibleScopeTypes.size() == 1) {
-                return possibleScopeTypes.iterator().next().annotationType();
-            } else {
-                throw BeanLogger.LOG.multipleScopesFoundFromStereotypes(BeanAttributesConfigurator.class.getSimpleName(),
-                        Formats.formatTypes(stereotypes, false), possibleScopeTypes, "");
-            }
-        }
-        return Dependent.class;
-    }
-
-    private Set<Annotation> initQualifiers(Set<Annotation> qualifiers) {
-        if (qualifiers.isEmpty()) {
-            return Bindings.DEFAULT_QUALIFIERS;
-        }
-        Set<Annotation> normalized = new HashSet<Annotation>(qualifiers);
-        normalized.remove(Any.Literal.INSTANCE);
-        normalized.remove(Default.Literal.INSTANCE);
-        if (normalized.isEmpty()) {
-            normalized = Bindings.DEFAULT_QUALIFIERS;
+    if (!stereotypes.isEmpty()) {
+      MetaAnnotationStore metaAnnotationStore =
+          beanManager.getServices().get(MetaAnnotationStore.class);
+      Set<Annotation> possibleScopeTypes = new HashSet<>();
+      for (Class<? extends Annotation> stereotype : stereotypes) {
+        StereotypeModel<? extends Annotation> model =
+            metaAnnotationStore.getStereotype(stereotype);
+        if (model.isValid()) {
+          possibleScopeTypes.add(model.getDefaultScopeType());
         } else {
-            ImmutableSet.Builder<Annotation> builder = ImmutableSet.builder();
-            if (normalized.size() == 1) {
-                if (normalized.iterator().next().annotationType().equals(Named.class)) {
-                    builder.add(Default.Literal.INSTANCE);
-                }
-            }
-            builder.add(Any.Literal.INSTANCE);
-            builder.addAll(qualifiers);
-            normalized = builder.build();
+          throw BeanManagerLogger.LOG.notStereotype(stereotype);
         }
-        return normalized;
+      }
+      if (possibleScopeTypes.size() == 1) {
+        return possibleScopeTypes.iterator().next().annotationType();
+      } else {
+        throw BeanLogger.LOG.multipleScopesFoundFromStereotypes(
+            BeanAttributesConfigurator.class.getSimpleName(),
+            Formats.formatTypes(stereotypes, false), possibleScopeTypes, "");
+      }
     }
+    return Dependent.class;
+  }
 
+  private Set<Annotation> initQualifiers(Set<Annotation> qualifiers) {
+    if (qualifiers.isEmpty()) {
+      return Bindings.DEFAULT_QUALIFIERS;
+    }
+    Set<Annotation> normalized = new HashSet<Annotation>(qualifiers);
+    normalized.remove(Any.Literal.INSTANCE);
+    normalized.remove(Default.Literal.INSTANCE);
+    if (normalized.isEmpty()) {
+      normalized = Bindings.DEFAULT_QUALIFIERS;
+    } else {
+      ImmutableSet.Builder<Annotation> builder = ImmutableSet.builder();
+      if (normalized.size() == 1) {
+        if (normalized.iterator().next().annotationType().equals(Named.class)) {
+          builder.add(Default.Literal.INSTANCE);
+        }
+      }
+      builder.add(Any.Literal.INSTANCE);
+      builder.addAll(qualifiers);
+      normalized = builder.build();
+    }
+    return normalized;
+  }
 }

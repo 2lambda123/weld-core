@@ -17,25 +17,18 @@
 
 package org.jboss.weld.tests.classDefining.c;
 
-import org.jboss.weld.tests.classDefining.b.BeanInterface;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import org.jboss.weld.tests.classDefining.b.BeanInterface;
 
 @ApplicationScoped
 public class AppScopedBean {
 
-    @Inject
-    private BeanInterface intf;
+  @Inject private BeanInterface intf;
 
-    @Inject
-    private BeanInterface.NestedInterface nested;
+  @Inject private BeanInterface.NestedInterface nested;
 
-    public void passNumberToInterface() {
-        intf.setNumber(666);
-    }
+  public void passNumberToInterface() { intf.setNumber(666); }
 
-    public void passNumberToNestedInterface() {
-        nested.setNumber(666);
-    }
+  public void passNumberToNestedInterface() { nested.setNumber(666); }
 }

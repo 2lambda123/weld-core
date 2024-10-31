@@ -24,12 +24,10 @@ import javax.inject.Inject;
 @Decorator
 public abstract class AbstractDecorator implements InterfaceWithDefaultMethod {
 
-    @Inject
-    @Delegate
-    InterfaceWithDefaultMethod delegate;
+  @Inject @Delegate InterfaceWithDefaultMethod delegate;
 
-    @Override
-    public String decoratedMethod() {
-        return AbstractDecorator.class.getSimpleName() + delegate.decoratedMethod();
-    }
+  @Override
+  public String decoratedMethod() {
+    return AbstractDecorator.class.getSimpleName() + delegate.decoratedMethod();
+  }
 }

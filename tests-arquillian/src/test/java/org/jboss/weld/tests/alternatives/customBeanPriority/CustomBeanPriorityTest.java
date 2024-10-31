@@ -18,7 +18,6 @@ package org.jboss.weld.tests.alternatives.customBeanPriority;
 
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.BeanArchive;
@@ -30,29 +29,31 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Tests that you can create a custom bean via (Weld)BeanConfigurator and give it a priority hence selecting it.
+ * Tests that you can create a custom bean via (Weld)BeanConfigurator and give
+ * it a priority hence selecting it.
  * @author <a href="mailto:manovotn@redhat.com">Matej Novotny</a>
  */
 @RunWith(Arquillian.class)
 public class CustomBeanPriorityTest {
 
-    @Deployment
-    public static JavaArchive createTestArchive() {
-        return ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(CustomBeanPriorityTest.class))
-            .addClasses(CustomBeanPriorityTest.class, MyExtension.class, PlainFoo.class, FooAlternative.class)
-            .addAsServiceProvider(Extension.class, MyExtension.class);
-    }
+  @Deployment
+  public static JavaArchive createTestArchive() {
+    return ShrinkWrap
+        .create(BeanArchive.class,
+                Utils.getDeploymentNameAsHash(CustomBeanPriorityTest.class))
+        .addClasses(CustomBeanPriorityTest.class, MyExtension.class,
+                    PlainFoo.class, FooAlternative.class)
+        .addAsServiceProvider(Extension.class, MyExtension.class);
+  }
 
-    @Inject
-    PlainFoo foo;
+  @Inject PlainFoo foo;
 
-    @Inject
-    FooAlternative alternative;
+  @Inject FooAlternative alternative;
 
-    @Test
-    public void contextLifecycleEventFiredForPostConstructCallbackActivation() {
-        Assert.assertEquals("bar", alternative.ping());
-        Assert.assertEquals("bar", foo.ping());
-        Assert.assertEquals(1, MyExtension.PSB_OBSERVED);
-    }
+  @Test
+  public void contextLifecycleEventFiredForPostConstructCallbackActivation() {
+    Assert.assertEquals("bar", alternative.ping());
+    Assert.assertEquals("bar", foo.ping());
+    Assert.assertEquals(1, MyExtension.PSB_OBSERVED);
+  }
 }

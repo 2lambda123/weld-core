@@ -24,12 +24,11 @@ import javax.inject.Inject;
 @Decorator
 public class NonAbstractDecorator implements InterfaceWithDefaultMethod {
 
-    @Inject
-    @Delegate
-    InterfaceWithDefaultMethod delegate;
+  @Inject @Delegate InterfaceWithDefaultMethod delegate;
 
-    @Override
-    public String decoratedMethod() {
-        return delegate.decoratedMethod() + NonAbstractDecorator.class.getSimpleName();
-    }
+  @Override
+  public String decoratedMethod() {
+    return delegate.decoratedMethod() +
+        NonAbstractDecorator.class.getSimpleName();
+  }
 }

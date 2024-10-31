@@ -17,7 +17,6 @@
 package org.jboss.weld.tests.instance.enhanced;
 
 import javax.annotation.PreDestroy;
-
 import org.jboss.weld.test.util.ActionSequence;
 
 /**
@@ -26,13 +25,13 @@ import org.jboss.weld.test.util.ActionSequence;
  */
 public class FirstProcessor implements Processor {
 
-    @Override
-    public void ping() {
-        ActionSequence.addAction("firstPing");
-    }
+  @Override
+  public void ping() {
+    ActionSequence.addAction("firstPing");
+  }
 
-    @PreDestroy
-    void destroy() {
-        ActionSequence.addAction("firstDestroy");
-    }
+  @PreDestroy
+  void destroy() {
+    ActionSequence.addAction("firstDestroy");
+  }
 }

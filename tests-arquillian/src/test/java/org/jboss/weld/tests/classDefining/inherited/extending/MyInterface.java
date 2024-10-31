@@ -21,5 +21,5 @@ import org.jboss.weld.tests.classDefining.inherited.base.AncestorInterface;
 
 public interface MyInterface extends AncestorInterface {
 
-    String anotherPing();
+  String anotherPing();
 }

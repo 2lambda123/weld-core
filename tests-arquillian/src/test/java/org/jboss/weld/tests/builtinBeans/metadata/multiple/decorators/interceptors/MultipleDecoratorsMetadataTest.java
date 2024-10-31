@@ -31,20 +31,20 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class MultipleDecoratorsMetadataTest {
 
-    @Deployment
-    public static Archive<?> getDeployment() {
-        return ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(MultipleDecoratorsMetadataTest.class))
-                .addPackage(MultipleDecoratorsMetadataTest.class.getPackage());
-    }
+  @Deployment
+  public static Archive<?> getDeployment() {
+    return ShrinkWrap
+        .create(BeanArchive.class, Utils.getDeploymentNameAsHash(
+                                       MultipleDecoratorsMetadataTest.class))
+        .addPackage(MultipleDecoratorsMetadataTest.class.getPackage());
+  }
 
-    @Inject
-    SomeInterface bean;
+  @Inject SomeInterface bean;
 
-    @Test
-    public void beanMetadataAvailableTest(){
-        String beanClass = ActualBean.class.getSimpleName();
-        String expected = beanClass + beanClass + "pong" + beanClass + beanClass;
-        Assert.assertEquals(expected, bean.ping());
-    }
-
+  @Test
+  public void beanMetadataAvailableTest() {
+    String beanClass = ActualBean.class.getSimpleName();
+    String expected = beanClass + beanClass + "pong" + beanClass + beanClass;
+    Assert.assertEquals(expected, bean.ping());
+  }
 }

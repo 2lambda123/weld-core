@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -31,8 +30,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * This tests the sorting of alternatives by priority when one of the priorities is {@link Integer.MIN_VALUE}.
- * This previously caused an integer overflow in the sorting, and resulted in an incorrect ordering.
+ * This tests the sorting of alternatives by priority when one of the priorities
+ * is {@link Integer.MIN_VALUE}. This previously caused an integer overflow in
+ * the sorting, and resulted in an incorrect ordering.
  *
  * @author Karl von Randow
  * @see WELD-2628
@@ -40,20 +40,24 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class MinValuePriorityTest {
 
-    @Deployment
-    public static Archive<?> createTestArchive() {
-        return ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(MinValuePriorityTest.class)).addPackage(AfterTypeDiscoveryObserver.class.getPackage())
-                .addAsServiceProvider(Extension.class, AfterTypeDiscoveryObserver.class);
-    }
+  @Deployment
+  public static Archive<?> createTestArchive() {
+    return ShrinkWrap
+        .create(BeanArchive.class,
+                Utils.getDeploymentNameAsHash(MinValuePriorityTest.class))
+        .addPackage(AfterTypeDiscoveryObserver.class.getPackage())
+        .addAsServiceProvider(Extension.class,
+                              AfterTypeDiscoveryObserver.class);
+  }
 
-    @Inject
-    AfterTypeDiscoveryObserver extension;
+  @Inject AfterTypeDiscoveryObserver extension;
 
-    @Test
-    public void testInitialAlternatives() {
-        assertEquals(extension.getInitialAlternatives().size(), 2);
-        assertEquals(extension.getInitialAlternatives().get(0), MinValuePriorityAlternative.class);
-        assertEquals(extension.getInitialAlternatives().get(1), NormalAlternative.class);
-    }
-
+  @Test
+  public void testInitialAlternatives() {
+    assertEquals(extension.getInitialAlternatives().size(), 2);
+    assertEquals(extension.getInitialAlternatives().get(0),
+                 MinValuePriorityAlternative.class);
+    assertEquals(extension.getInitialAlternatives().get(1),
+                 NormalAlternative.class);
+  }
 }

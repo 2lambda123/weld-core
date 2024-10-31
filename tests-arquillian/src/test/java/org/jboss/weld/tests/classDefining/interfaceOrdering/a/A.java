@@ -19,5 +19,5 @@ package org.jboss.weld.tests.classDefining.interfaceOrdering.a;
 
 public interface A {
 
-    String pingA();
+  String pingA();
 }

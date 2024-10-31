@@ -23,51 +23,58 @@ import io.undertow.servlet.api.InstanceFactory;
 import io.undertow.servlet.api.ListenerInfo;
 import io.undertow.servlet.api.ServletInfo;
 import io.undertow.servlet.util.ImmediateInstanceFactory;
-
 import java.util.EventListener;
-
 import javax.servlet.ServletContext;
-
 import org.jboss.weld.environment.servlet.logging.UndertowLogger;
 
 /**
- * Undertow extension that hooks into undertow's instance creation and delegates to Weld.
+ * Undertow extension that hooks into undertow's instance creation and delegates
+ * to Weld.
  *
  * @author Jozef Hartinger
  *
  */
 public class WeldServletExtension implements ServletExtension {
 
-    public static final String INSTALLED = WeldServletExtension.class.getName() + ".installed";
-    public static final String INSTALLED_SERVLET = "servlet-only";
-    public static final String INSTALLED_FULL = "full";
+  public static final String INSTALLED =
+      WeldServletExtension.class.getName() + ".installed";
+  public static final String INSTALLED_SERVLET = "servlet-only";
+  public static final String INSTALLED_FULL = "full";
 
-    @Override
-    public void handleDeployment(DeploymentInfo deploymentInfo, ServletContext servletContext) {
-        // Servlet injection
-        for (ServletInfo servlet : deploymentInfo.getServlets().values()) {
-            UndertowLogger.LOG.installingCdiSupport(servlet.getServletClass());
-            servlet.setInstanceFactory(WeldInstanceFactory.of(servlet.getInstanceFactory(), servletContext, servlet.getServletClass()));
-        }
-        try {
-            // Filter injection
-            for (FilterInfo filter : deploymentInfo.getFilters().values()) {
-                UndertowLogger.LOG.installingCdiSupport(filter.getFilterClass());
-                filter.setInstanceFactory(WeldInstanceFactory.of(filter.getInstanceFactory(), servletContext, filter.getFilterClass()));
-            }
-            // Listener injection
-            for (ListenerInfo listener : deploymentInfo.getListeners()) {
-                UndertowLogger.LOG.installingCdiSupport(listener.getListenerClass());
-                InstanceFactory<? extends EventListener> instanceFactory = listener.getInstanceFactory();
-                if (!(instanceFactory instanceof ImmediateInstanceFactory)) {
-                    listener.setInstanceFactory(WeldInstanceFactory.of(instanceFactory, servletContext, listener.getListenerClass()));
-                }
-            }
-            servletContext.setAttribute(INSTALLED, INSTALLED_FULL);
-        } catch (NoSuchMethodError e) {
-            // Undertow 1.2 and older does not have setInstanceFactory() on listeners/filters
-            servletContext.setAttribute(INSTALLED, INSTALLED_SERVLET);
-            return;
-        }
+  @Override
+  public void handleDeployment(DeploymentInfo deploymentInfo,
+                               ServletContext servletContext) {
+    // Servlet injection
+    for (ServletInfo servlet : deploymentInfo.getServlets().values()) {
+      UndertowLogger.LOG.installingCdiSupport(servlet.getServletClass());
+      servlet.setInstanceFactory(
+          WeldInstanceFactory.of(servlet.getInstanceFactory(), servletContext,
+                                 servlet.getServletClass()));
     }
+    try {
+      // Filter injection
+      for (FilterInfo filter : deploymentInfo.getFilters().values()) {
+        UndertowLogger.LOG.installingCdiSupport(filter.getFilterClass());
+        filter.setInstanceFactory(
+            WeldInstanceFactory.of(filter.getInstanceFactory(), servletContext,
+                                   filter.getFilterClass()));
+      }
+      // Listener injection
+      for (ListenerInfo listener : deploymentInfo.getListeners()) {
+        UndertowLogger.LOG.installingCdiSupport(listener.getListenerClass());
+        InstanceFactory<? extends EventListener> instanceFactory =
+            listener.getInstanceFactory();
+        if (!(instanceFactory instanceof ImmediateInstanceFactory)) {
+          listener.setInstanceFactory(WeldInstanceFactory.of(
+              instanceFactory, servletContext, listener.getListenerClass()));
+        }
+      }
+      servletContext.setAttribute(INSTALLED, INSTALLED_FULL);
+    } catch (NoSuchMethodError e) {
+      // Undertow 1.2 and older does not have setInstanceFactory() on
+      // listeners/filters
+      servletContext.setAttribute(INSTALLED, INSTALLED_SERVLET);
+      return;
+    }
+  }
 }

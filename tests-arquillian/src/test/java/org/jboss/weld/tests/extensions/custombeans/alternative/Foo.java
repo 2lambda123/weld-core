@@ -22,17 +22,11 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class Foo {
 
-    private final String val;
+  private final String val;
 
-    public Foo() {
-        val = Foo.class.getSimpleName();
-    }
+  public Foo() { val = Foo.class.getSimpleName(); }
 
-    public Foo(String val) {
-        this.val = val;
-    }
+  public Foo(String val) { this.val = val; }
 
-    public String ping() {
-        return val;
-    }
+  public String ping() { return val; }
 }

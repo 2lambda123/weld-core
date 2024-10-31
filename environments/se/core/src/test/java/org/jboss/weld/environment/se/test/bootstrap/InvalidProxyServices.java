@@ -17,45 +17,50 @@
 
 package org.jboss.weld.environment.se.test.bootstrap;
 
+import java.security.ProtectionDomain;
 import org.jboss.weld.serialization.spi.ProxyServices;
 
-import java.security.ProtectionDomain;
-
 /**
- * Contents of this class don't really matter - imports part is that supportsClassDefining returns false
+ * Contents of this class don't really matter - imports part is that
+ * supportsClassDefining returns false
  */
 public class InvalidProxyServices implements ProxyServices {
-    @Override
-    public ClassLoader getClassLoader(Class<?> proxiedBeanType) {
-        return null;
-    }
+  @Override
+  public ClassLoader getClassLoader(Class<?> proxiedBeanType) {
+    return null;
+  }
 
-    @Override
-    public Class<?> loadBeanClass(String className) {
-        return null;
-    }
+  @Override
+  public Class<?> loadBeanClass(String className) {
+    return null;
+  }
 
-    @Override
-    public Class<?> defineClass(Class<?> originalClass, String className, byte[] classBytes, int off, int len) throws ClassFormatError {
-        return null;
-    }
+  @Override
+  public Class<?> defineClass(Class<?> originalClass, String className,
+                              byte[] classBytes, int off, int len)
+      throws ClassFormatError {
+    return null;
+  }
 
-    @Override
-    public Class<?> defineClass(Class<?> originalClass, String className, byte[] classBytes, int off, int len, ProtectionDomain protectionDomain) throws ClassFormatError {
-        return null;
-    }
+  @Override
+  public Class<?> defineClass(Class<?> originalClass, String className,
+                              byte[] classBytes, int off, int len,
+                              ProtectionDomain protectionDomain)
+      throws ClassFormatError {
+    return null;
+  }
 
-    @Override
-    public Class<?> loadClass(Class<?> originalClass, String classBinaryName) throws ClassNotFoundException {
-        return null;
-    }
+  @Override
+  public Class<?> loadClass(Class<?> originalClass, String classBinaryName)
+      throws ClassNotFoundException {
+    return null;
+  }
 
-    @Override
-    public boolean supportsClassDefining() {
-        return false;
-    }
+  @Override
+  public boolean supportsClassDefining() {
+    return false;
+  }
 
-    @Override
-    public void cleanup() {
-    }
+  @Override
+  public void cleanup() {}
 }

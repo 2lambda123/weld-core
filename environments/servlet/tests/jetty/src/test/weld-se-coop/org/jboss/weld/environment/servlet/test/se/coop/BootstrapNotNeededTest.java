@@ -20,12 +20,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.WebClient;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.UUID;
-
 import javax.enterprise.inject.spi.CDI;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.jboss.weld.environment.se.Weld;
@@ -35,55 +35,55 @@ import org.jboss.weld.environment.servlet.Listener;
 import org.jboss.weld.environment.servlet.WeldServletLifecycle;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-
 public class BootstrapNotNeededTest {
 
-    @Test
-    public void testBootstrapNotNeeded() throws Exception {
+  @Test
+  public void testBootstrapNotNeeded() throws Exception {
 
-        String id = UUID.randomUUID().toString();
+    String id = UUID.randomUUID().toString();
 
-        // First boostrap Weld SE
-        try (WeldContainer container = new Weld(id).initialize()) {
+    // First boostrap Weld SE
+    try (WeldContainer container = new Weld(id).initialize()) {
 
-            TestBean testBean = container.instance().select(TestBean.class).get();
-            assertNotNull(testBean);
+      TestBean testBean = container.instance().select(TestBean.class).get();
+      assertNotNull(testBean);
 
-            // @Initialized(ApplicationScoped.class) ContainerInitialized
-            List<Object> initEvents = testBean.getInitEvents();
-            assertEquals(1, initEvents.size());
-            Object event = initEvents.get(0);
-            assertTrue(event instanceof ContainerInitialized);
-            assertEquals(id, ((ContainerInitialized)event).getContainerId());
+      // @Initialized(ApplicationScoped.class) ContainerInitialized
+      List<Object> initEvents = testBean.getInitEvents();
+      assertEquals(1, initEvents.size());
+      Object event = initEvents.get(0);
+      assertTrue(event instanceof ContainerInitialized);
+      assertEquals(id, ((ContainerInitialized)event).getContainerId());
 
-            // Test CDIProvider
-            CDI<Object> cdi = CDI.current();
-            assertTrue(cdi instanceof WeldContainer);
+      // Test CDIProvider
+      CDI<Object> cdi = CDI.current();
+      assertTrue(cdi instanceof WeldContainer);
 
-            // Then start Jetty
-            Server server = new Server(InetSocketAddress.createUnresolved("localhost", 8080));
-            try {
-                ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-                context.setContextPath("/");
-                server.setHandler(context);
-                context.addServlet(TestServlet.class, "/test");
-                context.setAttribute(WeldServletLifecycle.BEAN_MANAGER_ATTRIBUTE_NAME, container.getBeanManager());
-                context.addEventListener(new Listener());
-                server.start();
+      // Then start Jetty
+      Server server =
+          new Server(InetSocketAddress.createUnresolved("localhost", 8080));
+      try {
+        ServletContextHandler context =
+            new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        server.setHandler(context);
+        context.addServlet(TestServlet.class, "/test");
+        context.setAttribute(WeldServletLifecycle.BEAN_MANAGER_ATTRIBUTE_NAME,
+                             container.getBeanManager());
+        context.addEventListener(new Listener());
+        server.start();
 
-                // @Initialized(ApplicationScoped.class) ServletContext not fired
-                assertEquals(1, initEvents.size());
+        // @Initialized(ApplicationScoped.class) ServletContext not fired
+        assertEquals(1, initEvents.size());
 
-                WebClient webClient = new WebClient();
-                webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
-                Page page = webClient.getPage("http://localhost:8080/test");
-                assertEquals(testBean.getId(), page.getWebResponse().getContentAsString().trim());
-            } finally {
-                server.stop();
-            }
-        }
+        WebClient webClient = new WebClient();
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+        Page page = webClient.getPage("http://localhost:8080/test");
+        assertEquals(testBean.getId(),
+                     page.getWebResponse().getContentAsString().trim());
+      } finally {
+        server.stop();
+      }
     }
-
+  }
 }

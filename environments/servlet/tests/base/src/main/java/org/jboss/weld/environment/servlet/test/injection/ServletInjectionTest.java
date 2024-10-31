@@ -21,9 +21,7 @@ import static org.jboss.weld.environment.servlet.test.util.Deployments.extendDef
 import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -41,18 +39,26 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ServletInjectionTest {
 
-    public static final Asset WEB_XML = new ByteArrayAsset(extendDefaultWebXml("<servlet><servlet-name>Rat Servlet</servlet-name><servlet-class>" + RatServlet.class.getName() + "</servlet-class></servlet> <servlet-mapping><servlet-name>Rat Servlet</servlet-name><url-pattern>/rat</url-pattern></servlet-mapping>").getBytes());
+  public static final Asset WEB_XML = new ByteArrayAsset(
+      extendDefaultWebXml(
+          "<servlet><servlet-name>Rat Servlet</servlet-name><servlet-class>" +
+          RatServlet.class.getName() +
+          ("</servlet-class></servlet> <servlet-mapping><servlet-name>Rat " +
+           "Servlet</servlet-name><url-pattern>/rat</url-pattern></" +
+           "servlet-mapping>"))
+          .getBytes());
 
-    @Deployment
-    public static WebArchive createTestArchive() {
-        return baseDeployment(WEB_XML).addClasses(RatServlet.class, Sewer.class);
-    }
+  @Deployment
+  public static WebArchive createTestArchive() {
+    return baseDeployment(WEB_XML).addClasses(RatServlet.class, Sewer.class);
+  }
 
-    @Test
-    public void testServletInjection(@ArquillianResource URL baseURL) throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpGet request = new HttpGet(new URL(baseURL, "rat").toExternalForm());
-        assertEquals(HttpServletResponse.SC_OK, client.execute(request).getStatusLine().getStatusCode());
-    }
-
+  @Test
+  public void testServletInjection(@ArquillianResource URL baseURL)
+      throws Exception {
+    CloseableHttpClient client = HttpClients.createDefault();
+    HttpGet request = new HttpGet(new URL(baseURL, "rat").toExternalForm());
+    assertEquals(HttpServletResponse.SC_OK,
+                 client.execute(request).getStatusLine().getStatusCode());
+  }
 }

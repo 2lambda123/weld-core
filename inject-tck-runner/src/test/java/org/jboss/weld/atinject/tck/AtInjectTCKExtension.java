@@ -17,56 +17,56 @@
 
 package org.jboss.weld.atinject.tck;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Qualifier;
 import org.atinject.tck.auto.Convertible;
 import org.atinject.tck.auto.Drivers;
 import org.atinject.tck.auto.DriversSeat;
 import org.atinject.tck.auto.accessories.SpareTire;
 import org.jboss.weld.literal.NamedLiteral;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Qualifier;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 public class AtInjectTCKExtension implements Extension {
-    public void convertible(@Observes ProcessAnnotatedType<Convertible> pat) {
-        pat.configureAnnotatedType()
-                .filterFields(field -> "spareTire".equals(field.getJavaMember().getName()))
-                // add @Spare to the injection point, because the bean doesn't have @Default; see also below
-                .forEach(field -> field.add(SpareLiteral.INSTANCE));
-    }
+  public void convertible(@Observes ProcessAnnotatedType<Convertible> pat) {
+    pat.configureAnnotatedType()
+        .filterFields(
+            field -> "spareTire".equals(field.getJavaMember().getName()))
+        // add @Spare to the injection point, because the bean doesn't have
+        // @Default; see also below
+        .forEach(field -> field.add(SpareLiteral.INSTANCE));
+  }
 
-    public void driversSeat(@Observes ProcessAnnotatedType<DriversSeat> pat) {
-        pat.configureAnnotatedType()
-                .add(DriversLiteral.INSTANCE);
-    }
+  public void driversSeat(@Observes ProcessAnnotatedType<DriversSeat> pat) {
+    pat.configureAnnotatedType().add(DriversLiteral.INSTANCE);
+  }
 
-    public void spareTire(@Observes ProcessAnnotatedType<SpareTire> pat) {
-        pat.configureAnnotatedType()
-                .add(new NamedLiteral("spare"))
-                // add @Spare to prevent adding @Default, otherwise there would be 2 beans for the Tire type
-                .add(SpareLiteral.INSTANCE);
-    }
+  public void spareTire(@Observes ProcessAnnotatedType<SpareTire> pat) {
+    pat.configureAnnotatedType()
+        .add(new NamedLiteral("spare"))
+        // add @Spare to prevent adding @Default, otherwise there would be 2
+        // beans for the Tire type
+        .add(SpareLiteral.INSTANCE);
+  }
 
-    static final class DriversLiteral extends AnnotationLiteral<Drivers> implements Drivers {
-        static final DriversLiteral INSTANCE = new DriversLiteral();
+  static final class DriversLiteral
+      extends AnnotationLiteral<Drivers> implements Drivers {
+    static final DriversLiteral INSTANCE = new DriversLiteral();
 
-        private DriversLiteral() {
-        }
-    }
+    private DriversLiteral() {}
+  }
 
-    @Qualifier
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Spare {
-    }
+  @Qualifier
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface Spare {}
 
-    static final class SpareLiteral extends AnnotationLiteral<Spare> implements Spare {
-        static final SpareLiteral INSTANCE = new SpareLiteral();
+  static final class SpareLiteral
+      extends AnnotationLiteral<Spare> implements Spare {
+    static final SpareLiteral INSTANCE = new SpareLiteral();
 
-        private SpareLiteral() {
-        }
-    }
+    private SpareLiteral() {}
+  }
 }

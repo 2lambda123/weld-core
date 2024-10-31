@@ -20,5 +20,4 @@ package foo.bar;
 /**
  * Used by {@link org.jboss.weld.tests.unit.comparator.CustomComparatorTest}
  */
-public class Foo {
-}
+public class Foo {}

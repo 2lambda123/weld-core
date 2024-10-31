@@ -20,10 +20,10 @@ package org.jboss.weld.tests.classDefining.b;
 @FunctionalInterface
 public interface BeanInterface {
 
-    void setNumber(int number);
+  void setNumber(int number);
 
-    @FunctionalInterface
-    interface NestedInterface {
-        void setNumber(int number);
-    }
+  @FunctionalInterface
+  interface NestedInterface {
+    void setNumber(int number);
+  }
 }

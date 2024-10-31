@@ -20,5 +20,4 @@ package foo.bar.quax;
 /**
  * Used by {@link org.jboss.weld.tests.unit.comparator.CustomComparatorTest}
  */
-public class Quax {
-}
+public class Quax {}

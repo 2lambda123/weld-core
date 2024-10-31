@@ -18,14 +18,12 @@
 package org.jboss.weld.environment.gwtdev;
 
 import java.lang.reflect.Method;
-
 import javax.servlet.ServletContext;
-
-import org.jboss.weld.environment.servlet.Container;
-import org.jboss.weld.environment.servlet.ContainerContext;
 import org.jboss.weld.environment.jetty.AbstractJettyContainer;
 import org.jboss.weld.environment.jetty.JettyContainer;
 import org.jboss.weld.environment.jetty.JettyWeldInjector;
+import org.jboss.weld.environment.servlet.Container;
+import org.jboss.weld.environment.servlet.ContainerContext;
 import org.jboss.weld.environment.servlet.logging.JettyLogger;
 
 /**
@@ -33,31 +31,35 @@ import org.jboss.weld.environment.servlet.logging.JettyLogger;
  *
  */
 public class GwtDevHostedModeContainer extends AbstractJettyContainer {
-    public static final Container INSTANCE = new GwtDevHostedModeContainer();
+  public static final Container INSTANCE = new GwtDevHostedModeContainer();
 
-    // The gwt-dev jar is never in the project classpath (only in the maven/eclipse/intellij plugin classpath)
-    // except when GWT is being run in hosted mode.
-    private static final String GWT_DEV_HOSTED_MODE_REQUIRED_CLASS_NAME = "com.google.gwt.dev.HostedMode";
+  // The gwt-dev jar is never in the project classpath (only in the
+  // maven/eclipse/intellij plugin classpath) except when GWT is being run in
+  // hosted mode.
+  private static final String GWT_DEV_HOSTED_MODE_REQUIRED_CLASS_NAME =
+      "com.google.gwt.dev.HostedMode";
 
-    protected String classToCheck() {
-        return GWT_DEV_HOSTED_MODE_REQUIRED_CLASS_NAME;
+  protected String classToCheck() {
+    return GWT_DEV_HOSTED_MODE_REQUIRED_CLASS_NAME;
+  }
+
+  protected Class<?> getWeldServletHandlerClass() {
+    return JettyContainer.class;
+  }
+
+  public void initialize(ContainerContext context) {
+    // Try pushing a Jetty Injector into the servlet context
+    try {
+      context.getServletContext().setAttribute(
+          INJECTOR_ATTRIBUTE_NAME, new JettyWeldInjector(context.getManager()));
+      JettyLogger.LOG.gwtHostedModeDetected();
+
+      Class<?> decoratorClass = getWeldServletHandlerClass();
+      Method processMethod =
+          decoratorClass.getMethod("process", ServletContext.class);
+      processMethod.invoke(null, context.getServletContext());
+    } catch (Exception e) {
+      JettyLogger.LOG.unableToCreateJettyWeldInjector(e);
     }
-
-    protected Class<?> getWeldServletHandlerClass() {
-      return JettyContainer.class;
-    }
-
-    public void initialize(ContainerContext context) {
-        // Try pushing a Jetty Injector into the servlet context
-        try {
-            context.getServletContext().setAttribute(INJECTOR_ATTRIBUTE_NAME, new JettyWeldInjector(context.getManager()));
-            JettyLogger.LOG.gwtHostedModeDetected();
-
-            Class<?> decoratorClass = getWeldServletHandlerClass();
-            Method processMethod = decoratorClass.getMethod("process", ServletContext.class);
-            processMethod.invoke(null, context.getServletContext());
-        } catch (Exception e) {
-            JettyLogger.LOG.unableToCreateJettyWeldInjector(e);
-        }
-    }
+  }
 }

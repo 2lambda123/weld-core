@@ -17,14 +17,11 @@
 
 package org.jboss.weld.tests.classDefining.interfaceOrdering.b;
 
-import org.jboss.weld.tests.classDefining.interfaceOrdering.a.One;
-
 import javax.enterprise.inject.Vetoed;
+import org.jboss.weld.tests.classDefining.interfaceOrdering.a.One;
 
 @Vetoed
 public class Two extends One {
 
-    public String pingTwo() {
-        return "two";
-    }
+  public String pingTwo() { return "two"; }
 }

@@ -16,10 +16,11 @@
  */
 package org.jboss.weld.tests.resources;
 
-import java.net.URL;
+import static org.junit.Assert.assertEquals;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
+import java.net.URL;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -34,65 +35,73 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-
 @Category(Integration.class)
 @RunWith(Arquillian.class)
 public class EMFFactoryTest {
 
-    public static final Asset PERSISTENCE_XML = new ByteArrayAsset("<persistence xmlns=\"http://java.sun.com/xml/ns/persistence\" version=\"1.0\"><persistence-unit name=\"pu1\"><jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source></persistence-unit></persistence>".getBytes());
-    public static final Asset EMPTY_BEANS_XML = new ByteArrayAsset("<beans />".getBytes());
+  public static final Asset PERSISTENCE_XML = new ByteArrayAsset(
+      ("<persistence xmlns=\"http://java.sun.com/xml/ns/persistence\" " +
+       "version=\"1.0\"><persistence-unit " +
+       "name=\"pu1\"><jta-data-source>java:jboss/datasources/ExampleDS</" +
+       "jta-data-source></persistence-unit></persistence>").getBytes());
+  public static final Asset EMPTY_BEANS_XML =
+      new ByteArrayAsset("<beans />".getBytes());
 
-    @Deployment(testable = false)
-    public static Archive<?> deploy() {
-        return ShrinkWrap.create(WebArchive.class, Utils.getDeploymentNameAsHash(EMFFactoryTest.class, Utils.ARCHIVE_TYPE.WAR))
-                .addClasses(JPAResourceProducerSingletonEJB_StaticField.class, ProducedViaStaticFieldOnEJB.class, EMFConsumer1.class)
-                .addClasses(JPAResourceProducerManagedBean_InstanceField.class, ProducedViaInstanceFieldOnManagedBean.class, EMFConsumer2.class)
-                .addClasses(JPAResourceProducerManagedBean_StaticField.class, ProducedViaStaticFieldOnManagedBean.class, EMFConsumer3.class)
-                .addAsResource(PERSISTENCE_XML, "META-INF/persistence.xml")
-                .addAsWebInfResource(EMPTY_BEANS_XML, "beans.xml");
-    }
+  @Deployment(testable = false)
+  public static Archive<?> deploy() {
+    return ShrinkWrap
+        .create(WebArchive.class,
+                Utils.getDeploymentNameAsHash(EMFFactoryTest.class,
+                                              Utils.ARCHIVE_TYPE.WAR))
+        .addClasses(JPAResourceProducerSingletonEJB_StaticField.class,
+                    ProducedViaStaticFieldOnEJB.class, EMFConsumer1.class)
+        .addClasses(JPAResourceProducerManagedBean_InstanceField.class,
+                    ProducedViaInstanceFieldOnManagedBean.class,
+                    EMFConsumer2.class)
+        .addClasses(JPAResourceProducerManagedBean_StaticField.class,
+                    ProducedViaStaticFieldOnManagedBean.class,
+                    EMFConsumer3.class)
+        .addAsResource(PERSISTENCE_XML, "META-INF/persistence.xml")
+        .addAsWebInfResource(EMPTY_BEANS_XML, "beans.xml");
+  }
 
-    @ArquillianResource
-    private URL url;
+  @ArquillianResource private URL url;
 
-    /*
-    * description = "WELD-632"
-    */
-    @Test
-    public void testStaticEJBEMFProducerField() throws Exception {
-        WebClient client = new WebClient();
-        client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        Page page = client.getPage(getPath("emfconsumer1"));
+  /*
+   * description = "WELD-632"
+   */
+  @Test
+  public void testStaticEJBEMFProducerField() throws Exception {
+    WebClient client = new WebClient();
+    client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    Page page = client.getPage(getPath("emfconsumer1"));
 
-        assertEquals(200, page.getWebResponse().getStatusCode());
-    }
+    assertEquals(200, page.getWebResponse().getStatusCode());
+  }
 
-    /*
-    * description = "WELD-632"
-    */
-    @Test
-    public void testInstanceManagedBeanEMFProducerField() throws Exception {
-        WebClient client = new WebClient();
-        client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        Page page = client.getPage(getPath("emfconsumer2"));
+  /*
+   * description = "WELD-632"
+   */
+  @Test
+  public void testInstanceManagedBeanEMFProducerField() throws Exception {
+    WebClient client = new WebClient();
+    client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    Page page = client.getPage(getPath("emfconsumer2"));
 
-        assertEquals(200, page.getWebResponse().getStatusCode());
-    }
+    assertEquals(200, page.getWebResponse().getStatusCode());
+  }
 
-    /*
-    * description = "WELD-632"
-    */
-    @Test
-    public void testStaticManagedBeanEMFProducerField() throws Exception {
-        WebClient client = new WebClient();
-        client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        Page page = client.getPage(getPath("emfconsumer3"));
+  /*
+   * description = "WELD-632"
+   */
+  @Test
+  public void testStaticManagedBeanEMFProducerField() throws Exception {
+    WebClient client = new WebClient();
+    client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    Page page = client.getPage(getPath("emfconsumer3"));
 
-        assertEquals(200, page.getWebResponse().getStatusCode());
-    }
+    assertEquals(200, page.getWebResponse().getStatusCode());
+  }
 
-    protected String getPath(String viewId) {
-        return url + viewId;
-    }
+  protected String getPath(String viewId) { return url + viewId; }
 }

@@ -20,5 +20,4 @@ package org.jboss.weld.environment.se.test.implicit.merging;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class Foo {
-}
+public class Foo {}

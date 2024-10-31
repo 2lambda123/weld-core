@@ -30,12 +30,10 @@ import javax.interceptor.InvocationContext;
 @SomeBinding
 public class InterceptorOne {
 
-    @Inject
-    @Intercepted
-    Bean<?> metadata;
+  @Inject @Intercepted Bean<?> metadata;
 
-    @AroundInvoke
-    public Object intercept(InvocationContext ctx) throws Exception {
-        return ctx.proceed() + metadata.getBeanClass().getSimpleName();
-    }
+  @AroundInvoke
+  public Object intercept(InvocationContext ctx) throws Exception {
+    return ctx.proceed() + metadata.getBeanClass().getSimpleName();
+  }
 }

@@ -17,40 +17,39 @@
 
 package org.jboss.weld.tests.classDefining.inherited;
 
-import org.jboss.weld.tests.classDefining.inherited.extending.MyInterface;
-import org.jboss.weld.tests.classDefining.inherited.base.AncestorInterface;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import org.jboss.weld.tests.classDefining.inherited.base.AncestorInterface;
+import org.jboss.weld.tests.classDefining.inherited.extending.MyInterface;
 
 @ApplicationScoped
 public class BeanProducer {
 
-    // produce a proxied bean for a type with interface hierarchy
-    @Produces
-    @ApplicationScoped
-    public MyInterface produceBean() {
-        return new MyInterface() {
-            @Override
-            public String anotherPing() {
-                return MyInterface.class.getSimpleName();
-            }
+  // produce a proxied bean for a type with interface hierarchy
+  @Produces
+  @ApplicationScoped
+  public MyInterface produceBean() {
+    return new MyInterface() {
+      @Override
+      public String anotherPing() {
+        return MyInterface.class.getSimpleName();
+      }
 
-            @Override
-            public String ping() {
-                return AncestorInterface.class.getSimpleName();
-            }
-        };
-    }
+      @Override
+      public String ping() {
+        return AncestorInterface.class.getSimpleName();
+      }
+    };
+  }
 
-    @Produces
-    @ApplicationScoped
-    public AMuchBetterPrincipal producePrincipal() {
-        return new AMuchBetterPrincipal() {
-            @Override
-            public String getName() {
-                return AMuchBetterPrincipal.class.getSimpleName();
-            }
-        };
-    }
+  @Produces
+  @ApplicationScoped
+  public AMuchBetterPrincipal producePrincipal() {
+    return new AMuchBetterPrincipal() {
+      @Override
+      public String getName() {
+        return AMuchBetterPrincipal.class.getSimpleName();
+      }
+    };
+  }
 }

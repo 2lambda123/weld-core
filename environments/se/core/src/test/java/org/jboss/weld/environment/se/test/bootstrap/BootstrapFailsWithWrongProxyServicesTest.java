@@ -24,20 +24,24 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests that Weld container fails to bootstrap if provided with insufficient implementation of ProxyServices
+ * Tests that Weld container fails to bootstrap if provided with insufficient
+ * implementation of ProxyServices
  *
  * @author Matej Novotny
  */
 public class BootstrapFailsWithWrongProxyServicesTest {
 
-    @Test
-    public void testBootstrapFails() {
-        Weld weld = new Weld().disableDiscovery().addBeanClass(DummyBean.class).addServices(new InvalidProxyServices());
-        try (WeldContainer container = weld.initialize()){
-            // ISE should have been thrown earlier
-            Assert.fail();
-        } catch (IllegalStateException ise) {
-            // expected
-        }
+  @Test
+  public void testBootstrapFails() {
+    Weld weld = new Weld()
+                    .disableDiscovery()
+                    .addBeanClass(DummyBean.class)
+                    .addServices(new InvalidProxyServices());
+    try (WeldContainer container = weld.initialize()) {
+      // ISE should have been thrown earlier
+      Assert.fail();
+    } catch (IllegalStateException ise) {
+      // expected
     }
+  }
 }

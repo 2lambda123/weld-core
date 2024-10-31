@@ -18,10 +18,12 @@ package org.jboss.weld.tests.builtinBeans.metadata.broken.interceptor;
 
 import static org.junit.Assert.assertEquals;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.WebClient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -34,29 +36,31 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-
 @Category(Integration.class)
 @RunWith(Arquillian.class)
 public class UnavailableInterceptedBeanMetadataTest {
 
-    @Deployment(testable = false)
-    public static WebArchive createTestArchive() {
-        return ShrinkWrap.create(WebArchive.class, Utils.getDeploymentNameAsHash(UnavailableInterceptedBeanMetadataTest.class, Utils.ARCHIVE_TYPE.WAR))
-                .addClasses(FooServlet.class, FooServletInterceptor.class, FooServletInterceptorBinding.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
+  @Deployment(testable = false)
+  public static WebArchive createTestArchive() {
+    return ShrinkWrap
+        .create(WebArchive.class,
+                Utils.getDeploymentNameAsHash(
+                    UnavailableInterceptedBeanMetadataTest.class,
+                    Utils.ARCHIVE_TYPE.WAR))
+        .addClasses(FooServlet.class, FooServletInterceptor.class,
+                    FooServletInterceptorBinding.class)
+        .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+  }
 
-    @ArquillianResource
-    private URL contextPath;
+  @ArquillianResource private URL contextPath;
 
-    @Test
-    public void testMetadataIsNotAvailable() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-        WebClient webClient = new WebClient();
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        Page page = webClient.getPage(contextPath + "FooServlet");
-        assertEquals("OK", page.getWebResponse().getContentAsString().trim());
-    }
+  @Test
+  public void testMetadataIsNotAvailable()
+      throws FailingHttpStatusCodeException, MalformedURLException,
+             IOException {
+    WebClient webClient = new WebClient();
+    webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    Page page = webClient.getPage(contextPath + "FooServlet");
+    assertEquals("OK", page.getWebResponse().getContentAsString().trim());
+  }
 }

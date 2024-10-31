@@ -20,14 +20,12 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.Set;
-
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Decorated;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InjectionPoint;
-
 import org.jboss.weld.bean.BeanIdentifiers;
 import org.jboss.weld.bean.StringBeanIdentifier;
 import org.jboss.weld.contexts.WeldCreationalContext;
@@ -45,50 +43,58 @@ import org.jboss.weld.util.bean.SerializableForwardingBean;
  */
 public class DecoratedBeanMetadataBean extends InterceptedBeanMetadataBean {
 
-    public DecoratedBeanMetadataBean(BeanManagerImpl beanManager) {
-        super(new StringBeanIdentifier(BeanIdentifiers.forBuiltInBean(beanManager, Bean.class, Decorated.class.getSimpleName())), beanManager);
+  public DecoratedBeanMetadataBean(BeanManagerImpl beanManager) {
+    super(new StringBeanIdentifier(BeanIdentifiers.forBuiltInBean(
+              beanManager, Bean.class, Decorated.class.getSimpleName())),
+          beanManager);
+  }
+
+  @Override
+  protected void checkInjectionPoint(InjectionPoint ip) {
+    if (!(ip.getBean() instanceof Decorator<?>)) {
+      throw new IllegalArgumentException(
+          "@Decorated Bean<?> can only be injected into a decorator.");
     }
+  }
 
-    @Override
-    protected void checkInjectionPoint(InjectionPoint ip) {
-        if (!(ip.getBean() instanceof Decorator<?>)) {
-            throw new IllegalArgumentException("@Decorated Bean<?> can only be injected into a decorator.");
-        }
+  @Override
+  protected Bean<?> newInstance(InjectionPoint ip,
+                                CreationalContext<Bean<?>> ctx) {
+    checkInjectionPoint(ip);
+
+    WeldCreationalContext<?> decoratorContext = getParentCreationalContext(ctx);
+    WeldCreationalContext<?> beanContext =
+        getParentCreationalContext(decoratorContext);
+    // when there are more decorators present, a CreationalContext hierarchy is
+    // created between them we want to iterate over this hierarchy to make sure
+    // we return the original decorated bean
+    while (beanContext.getContextual() instanceof Decorator) {
+      beanContext = getParentCreationalContext(beanContext);
     }
+    Contextual<?> decoratedContextual = beanContext.getContextual();
 
-    @Override
-    protected Bean<?> newInstance(InjectionPoint ip, CreationalContext<Bean<?>> ctx) {
-        checkInjectionPoint(ip);
-
-        WeldCreationalContext<?> decoratorContext = getParentCreationalContext(ctx);
-        WeldCreationalContext<?> beanContext = getParentCreationalContext(decoratorContext);
-        // when there are more decorators present, a CreationalContext hierarchy is created between them
-        // we want to iterate over this hierarchy to make sure we return the original decorated bean
-        while (beanContext.getContextual() instanceof Decorator) {
-            beanContext = getParentCreationalContext(beanContext);
-        }
-        Contextual<?> decoratedContextual = beanContext.getContextual();
-
-        if (decoratedContextual instanceof Bean<?>) {
-            Bean<?> bean = (Bean<?>) decoratedContextual;
-            if (bean instanceof Serializable) {
-                return bean;
-            } else {
-                return SerializableForwardingBean.of(getBeanManager().getContextId(), bean);
-            }
-        } else {
-            InterceptorLogger.LOG.unableToDetermineInterceptedBean(ip);
-            return null;
-        }
+    if (decoratedContextual instanceof Bean<?>) {
+      Bean<?> bean = (Bean<?>)decoratedContextual;
+      if (bean instanceof Serializable) {
+        return bean;
+      } else {
+        return SerializableForwardingBean.of(getBeanManager().getContextId(),
+                                             bean);
+      }
+    } else {
+      InterceptorLogger.LOG.unableToDetermineInterceptedBean(ip);
+      return null;
     }
+  }
 
-    @Override
-    public Set<Annotation> getQualifiers() {
-        return Collections.<Annotation> singleton(DecoratedLiteral.INSTANCE);
-    }
+  @Override
+  public Set<Annotation> getQualifiers() {
+    return Collections.<Annotation>singleton(DecoratedLiteral.INSTANCE);
+  }
 
-    @Override
-    public String toString() {
-        return "Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers [@Decorated]";
-    }
+  @Override
+  public String toString() {
+    return "Implicit Bean [javax.enterprise.inject.spi.Bean] with qualifiers " +
+           "[@Decorated]";
+  }
 }

@@ -17,6 +17,8 @@
 
 package org.jboss.weld.tests.extensions.custombeans.alternative;
 
+import javax.enterprise.inject.spi.Extension;
+import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.BeanArchive;
@@ -27,30 +29,29 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
-
 /**
- * Tests that registering a synthetic enabled alternative via {@code Bean<T>} that implements {@code Prioritized} will
- * fire {@code ProcessBean} event.
+ * Tests that registering a synthetic enabled alternative via {@code Bean<T>}
+ * that implements {@code Prioritized} will fire {@code ProcessBean} event.
  */
 @RunWith(Arquillian.class)
 public class CustomPrioritizedBeanFiresProcessBeanEventTest {
 
-    @Deployment
-    public static JavaArchive createTestArchive() {
-        return ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(CustomPrioritizedBeanFiresProcessBeanEventTest.class))
-                .addClasses(Foo.class, MyExtension.class, FooBean.class)
-                .addAsServiceProvider(Extension.class, MyExtension.class);
-    }
+  @Deployment
+  public static JavaArchive createTestArchive() {
+    return ShrinkWrap
+        .create(BeanArchive.class,
+                Utils.getDeploymentNameAsHash(
+                    CustomPrioritizedBeanFiresProcessBeanEventTest.class))
+        .addClasses(Foo.class, MyExtension.class, FooBean.class)
+        .addAsServiceProvider(Extension.class, MyExtension.class);
+  }
 
-    @Inject
-    Foo foo;
+  @Inject Foo foo;
 
-    @Test
-    public void testBeanTriggeredEvents() {
-        Assert.assertEquals(2, MyExtension.PB_TRIGGERED);
-        Assert.assertEquals(1, MyExtension.PSB_TRIGGERED);
-        Assert.assertEquals(FooBean.class.getSimpleName(), foo.ping());
-    }
+  @Test
+  public void testBeanTriggeredEvents() {
+    Assert.assertEquals(2, MyExtension.PB_TRIGGERED);
+    Assert.assertEquals(1, MyExtension.PSB_TRIGGERED);
+    Assert.assertEquals(FooBean.class.getSimpleName(), foo.ping());
+  }
 }

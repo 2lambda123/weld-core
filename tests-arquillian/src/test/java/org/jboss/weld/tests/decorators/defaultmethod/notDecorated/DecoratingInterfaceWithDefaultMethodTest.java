@@ -17,6 +17,7 @@
 
 package org.jboss.weld.tests.decorators.defaultmethod.notDecorated;
 
+import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -27,30 +28,35 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-
 /**
- * Decorator on an interface that only decorated non-default method. Contains a variant for standard and
- * abstract decorators.
+ * Decorator on an interface that only decorated non-default method. Contains a
+ * variant for standard and abstract decorators.
  *
  * See also WELD-2647
  */
 @RunWith(Arquillian.class)
 public class DecoratingInterfaceWithDefaultMethodTest {
-    @Deployment
-    public static Archive<?> deploy() {
-        return ShrinkWrap.create(BeanArchive.class, Utils.getDeploymentNameAsHash(DecoratingInterfaceWithDefaultMethodTest.class))
-                .decorate(NonAbstractDecorator.class)
-                .decorate(AbstractDecorator.class)
-                .addPackage(DecoratingInterfaceWithDefaultMethodTest.class.getPackage());
-    }
+  @Deployment
+  public static Archive<?> deploy() {
+    return ShrinkWrap
+        .create(BeanArchive.class,
+                Utils.getDeploymentNameAsHash(
+                    DecoratingInterfaceWithDefaultMethodTest.class))
+        .decorate(NonAbstractDecorator.class)
+        .decorate(AbstractDecorator.class)
+        .addPackage(
+            DecoratingInterfaceWithDefaultMethodTest.class.getPackage());
+  }
 
-    @Inject
-    FooBean bean;
+  @Inject FooBean bean;
 
-    @Test
-    public void testDecoratorOnInterfaceWithDefaultMethod() {
-        Assert.assertEquals(InterfaceWithDefaultMethod.class.getSimpleName(), bean.defaultPing());
-        Assert.assertEquals(AbstractDecorator.class.getSimpleName() + FooBean.class.getSimpleName() + NonAbstractDecorator.class.getSimpleName(), bean.decoratedMethod());
-    }
+  @Test
+  public void testDecoratorOnInterfaceWithDefaultMethod() {
+    Assert.assertEquals(InterfaceWithDefaultMethod.class.getSimpleName(),
+                        bean.defaultPing());
+    Assert.assertEquals(AbstractDecorator.class.getSimpleName() +
+                            FooBean.class.getSimpleName() +
+                            NonAbstractDecorator.class.getSimpleName(),
+                        bean.decoratedMethod());
+  }
 }

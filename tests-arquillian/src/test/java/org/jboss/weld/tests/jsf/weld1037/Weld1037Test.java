@@ -17,13 +17,13 @@
 
 package org.jboss.weld.tests.jsf.weld1037;
 
-import java.net.URL;
-
-import javax.servlet.http.HttpServletResponse;
+import static org.junit.Assert.assertEquals;
 
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
+import java.net.URL;
+import javax.servlet.http.HttpServletResponse;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -37,8 +37,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author <a href="mailto:mluksa@redhat.com">Marko Luksa</a>
  */
@@ -46,27 +44,33 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Arquillian.class)
 public class Weld1037Test {
 
-    @Deployment
-    public static WebArchive deployment() {
-        return ShrinkWrap.create(WebArchive.class, Utils.getDeploymentNameAsHash(Weld1037Test.class, Utils.ARCHIVE_TYPE.WAR))
-                .addClass(RedirectBean.class)
-                .addAsWebResource(Weld1037Test.class.getPackage(), "doRedirect.xhtml", "doRedirect.xhtml")
-                .addAsWebInfResource(Weld1037Test.class.getPackage(), "web.xml", "web.xml")
-                .addAsWebInfResource(Weld1037Test.class.getPackage(), "faces-config.xml", "faces-config.xml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
+  @Deployment
+  public static WebArchive deployment() {
+    return ShrinkWrap
+        .create(WebArchive.class,
+                Utils.getDeploymentNameAsHash(Weld1037Test.class,
+                                              Utils.ARCHIVE_TYPE.WAR))
+        .addClass(RedirectBean.class)
+        .addAsWebResource(Weld1037Test.class.getPackage(), "doRedirect.xhtml",
+                          "doRedirect.xhtml")
+        .addAsWebInfResource(Weld1037Test.class.getPackage(), "web.xml",
+                             "web.xml")
+        .addAsWebInfResource(Weld1037Test.class.getPackage(),
+                             "faces-config.xml", "faces-config.xml")
+        .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+  }
 
-    @Test
-    @RunAsClient
-    public void testRedirectInPreRenderViewAction(@ArquillianResource URL url) throws Exception {
-        WebClient client = new WebClient();
-        WebClientOptions options = client.getOptions();
-        options.setRedirectEnabled(false);
-        options.setThrowExceptionOnFailingStatusCode(false);
+  @Test
+  @RunAsClient
+  public void testRedirectInPreRenderViewAction(@ArquillianResource URL url)
+      throws Exception {
+    WebClient client = new WebClient();
+    WebClientOptions options = client.getOptions();
+    options.setRedirectEnabled(false);
+    options.setThrowExceptionOnFailingStatusCode(false);
 
-        Page page = client.getPage(url + "/doRedirect.faces");
-        assertEquals("Expected redirect:", HttpServletResponse.SC_MOVED_TEMPORARILY, page.getWebResponse().getStatusCode());
-    }
-
-
+    Page page = client.getPage(url + "/doRedirect.faces");
+    assertEquals("Expected redirect:", HttpServletResponse.SC_MOVED_TEMPORARILY,
+                 page.getWebResponse().getStatusCode());
+  }
 }

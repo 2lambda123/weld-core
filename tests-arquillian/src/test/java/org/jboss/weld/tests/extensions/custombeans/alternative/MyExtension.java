@@ -25,18 +25,16 @@ import javax.enterprise.inject.spi.ProcessSyntheticBean;
 
 public class MyExtension implements Extension {
 
-    public static int PB_TRIGGERED = 0;
-    public static int PSB_TRIGGERED = 0;
+  public static int PB_TRIGGERED = 0;
+  public static int PSB_TRIGGERED = 0;
 
-    public void observeABD(@Observes AfterBeanDiscovery abd) {
-        abd.addBean(new FooBean());
-    }
+  public void observeABD(@Observes AfterBeanDiscovery abd) {
+    abd.addBean(new FooBean());
+  }
 
-    public void obsevePB(@Observes ProcessBean<Foo> psb) {
-        PB_TRIGGERED++;
-    }
+  public void obsevePB(@Observes ProcessBean<Foo> psb) { PB_TRIGGERED++; }
 
-    public void obsevePSB(@Observes ProcessSyntheticBean<Foo> psb) {
-        PSB_TRIGGERED++;
-    }
+  public void obsevePSB(@Observes ProcessSyntheticBean<Foo> psb) {
+    PSB_TRIGGERED++;
+  }
 }

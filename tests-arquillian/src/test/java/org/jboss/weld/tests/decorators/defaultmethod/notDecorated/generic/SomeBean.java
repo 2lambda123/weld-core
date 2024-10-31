@@ -22,8 +22,8 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class SomeBean implements GenericInterfaceWithDefaultMethod {
 
-    @Override
-    public String ping() {
-        return SomeBean.class.getSimpleName();
-    }
+  @Override
+  public String ping() {
+    return SomeBean.class.getSimpleName();
+  }
 }

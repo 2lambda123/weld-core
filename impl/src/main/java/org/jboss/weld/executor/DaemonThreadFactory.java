@@ -20,23 +20,25 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * {@link ThreadFactory} that creates daemon threads so that Weld does not hang e.g. in a SE environment.
+ * {@link ThreadFactory} that creates daemon threads so that Weld does not hang
+ * e.g. in a SE environment.
  * @author Jozef Hartinger
  *
  */
 public class DaemonThreadFactory implements ThreadFactory {
 
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
-    private final String threadNamePrefix;
+  private final AtomicInteger threadNumber = new AtomicInteger(1);
+  private final String threadNamePrefix;
 
-    public DaemonThreadFactory(String threadNamePrefix) {
-        this.threadNamePrefix = threadNamePrefix;
-    }
+  public DaemonThreadFactory(String threadNamePrefix) {
+    this.threadNamePrefix = threadNamePrefix;
+  }
 
-    @Override
-    public Thread newThread(Runnable r) {
-        Thread thread = new Thread(r, threadNamePrefix + threadNumber.getAndIncrement());
-        thread.setDaemon(true);
-        return thread;
-    }
+  @Override
+  public Thread newThread(Runnable r) {
+    Thread thread =
+        new Thread(r, threadNamePrefix + threadNumber.getAndIncrement());
+    thread.setDaemon(true);
+    return thread;
+  }
 }

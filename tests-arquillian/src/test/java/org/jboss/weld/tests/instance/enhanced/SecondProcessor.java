@@ -18,7 +18,6 @@ package org.jboss.weld.tests.instance.enhanced;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-
 import org.jboss.weld.test.util.ActionSequence;
 
 /**
@@ -28,13 +27,13 @@ import org.jboss.weld.test.util.ActionSequence;
 @ApplicationScoped
 public class SecondProcessor implements Processor {
 
-    @Override
-    public void ping() {
-        ActionSequence.addAction("secondPing");
-    }
+  @Override
+  public void ping() {
+    ActionSequence.addAction("secondPing");
+  }
 
-    @PreDestroy
-    void destroy() {
-        ActionSequence.addAction("secondDestroy");
-    }
+  @PreDestroy
+  void destroy() {
+    ActionSequence.addAction("secondDestroy");
+  }
 }

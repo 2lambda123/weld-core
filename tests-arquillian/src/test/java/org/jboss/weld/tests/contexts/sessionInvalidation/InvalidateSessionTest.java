@@ -22,7 +22,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import org.junit.Assert;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -31,13 +33,10 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.weld.test.util.Utils;
 import org.jboss.weld.tests.category.Integration;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * <p>Check what happens when session.invalidate() is called.</p>
@@ -47,78 +46,85 @@ import java.util.Set;
 @Category(Integration.class)
 @RunWith(Arquillian.class)
 public class InvalidateSessionTest {
-    @Deployment(testable = false)
-    public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, Utils.getDeploymentNameAsHash(InvalidateSessionTest.class, Utils.ARCHIVE_TYPE.WAR))
-                .addClasses(Storm.class, SomeBean.class)
-                .addAsWebInfResource(InvalidateSessionTest.class.getPackage(), "web.xml", "web.xml")
-                .addAsWebInfResource(InvalidateSessionTest.class.getPackage(), "faces-config.xml", "faces-config.xml")
-                .addAsWebResource(InvalidateSessionTest.class.getPackage(), "storm.jsf", "storm.jspx")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+  @Deployment(testable = false)
+  public static WebArchive createDeployment() {
+    return ShrinkWrap
+        .create(WebArchive.class,
+                Utils.getDeploymentNameAsHash(InvalidateSessionTest.class,
+                                              Utils.ARCHIVE_TYPE.WAR))
+        .addClasses(Storm.class, SomeBean.class)
+        .addAsWebInfResource(InvalidateSessionTest.class.getPackage(),
+                             "web.xml", "web.xml")
+        .addAsWebInfResource(InvalidateSessionTest.class.getPackage(),
+                             "faces-config.xml", "faces-config.xml")
+        .addAsWebResource(InvalidateSessionTest.class.getPackage(), "storm.jsf",
+                          "storm.jspx")
+        .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+  }
+
+  @ArquillianResource private URL url;
+
+  /*
+   * description = "WELD-380, WELD-403"
+   */
+  @Test
+  public void testInvalidateSessionCalled() throws Exception {
+    WebClient client = new WebClient();
+    client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+
+    HtmlPage page = client.getPage(getPath("/storm.jsf"));
+    HtmlSubmitInput invalidateSessionButton = getFirstMatchingElement(
+        page, HtmlSubmitInput.class, "invalidateSessionButton");
+    page = invalidateSessionButton.click();
+    HtmlInput inputField =
+        getFirstMatchingElement(page, HtmlInput.class, "prop");
+    Assert.assertEquals(Storm.PROPERTY_VALUE, inputField.getValueAttribute());
+
+    // Make another request to verify that the session bean value is not the
+    // one from the previous invalidated session.
+    page = client.getPage(getPath("/storm.jsf"));
+    inputField = getFirstMatchingElement(page, HtmlInput.class, "prop");
+    Assert.assertEquals(SomeBean.DEFAULT_PROPERTY_VALUE,
+                        inputField.getValueAttribute());
+  }
+
+  /*
+   * description = "WELD-461"
+   */
+  @Test
+  public void testNoDoubleDestructionOnExternalRedirect() throws Exception {
+    WebClient client = new WebClient();
+    HtmlPage page = client.getPage(getPath("/storm.jsf"));
+    HtmlSubmitInput button =
+        getFirstMatchingElement(page, HtmlSubmitInput.class, "redirectButton");
+    button.click();
+  }
+
+  protected String getPath(String page) { return url + page; }
+
+  protected <T> Set<T> getElements(HtmlElement rootElement,
+                                   Class<T> elementClass) {
+    Set<T> result = new HashSet<T>();
+
+    for (HtmlElement element : rootElement.getHtmlElementDescendants()) {
+      result.addAll(getElements(element, elementClass));
     }
 
-    @ArquillianResource
-    private URL url;
-
-    /*
-    * description = "WELD-380, WELD-403"
-    */
-    @Test
-    public void testInvalidateSessionCalled() throws Exception {
-        WebClient client = new WebClient();
-        client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-
-        HtmlPage page = client.getPage(getPath("/storm.jsf"));
-        HtmlSubmitInput invalidateSessionButton = getFirstMatchingElement(page, HtmlSubmitInput.class, "invalidateSessionButton");
-        page = invalidateSessionButton.click();
-        HtmlInput inputField = getFirstMatchingElement(page, HtmlInput.class, "prop");
-        Assert.assertEquals(Storm.PROPERTY_VALUE, inputField.getValueAttribute());
-
-        // Make another request to verify that the session bean value is not the
-        // one from the previous invalidated session.
-        page = client.getPage(getPath("/storm.jsf"));
-        inputField = getFirstMatchingElement(page, HtmlInput.class, "prop");
-        Assert.assertEquals(SomeBean.DEFAULT_PROPERTY_VALUE, inputField.getValueAttribute());
+    if (elementClass.isInstance(rootElement)) {
+      result.add(elementClass.cast(rootElement));
     }
+    return result;
+  }
 
-    /*
-    * description = "WELD-461"
-    */
-    @Test
-    public void testNoDoubleDestructionOnExternalRedirect() throws Exception {
-        WebClient client = new WebClient();
-        HtmlPage page = client.getPage(getPath("/storm.jsf"));
-        HtmlSubmitInput button = getFirstMatchingElement(page, HtmlSubmitInput.class, "redirectButton");
-        button.click();
+  protected <T extends HtmlElement> T
+  getFirstMatchingElement(HtmlPage page, Class<T> elementClass, String id) {
+
+    Set<T> inputs = getElements(page.getBody(), elementClass);
+    for (T input : inputs) {
+      if (input.getId().contains(id)) {
+        return input;
+      }
     }
-
-    protected String getPath(String page) {
-        return url + page;
-    }
-
-    protected <T> Set<T> getElements(HtmlElement rootElement, Class<T> elementClass) {
-        Set<T> result = new HashSet<T>();
-
-        for (HtmlElement element : rootElement.getHtmlElementDescendants()) {
-            result.addAll(getElements(element, elementClass));
-        }
-
-        if (elementClass.isInstance(rootElement)) {
-            result.add(elementClass.cast(rootElement));
-        }
-        return result;
-
-    }
-
-    protected <T extends HtmlElement> T getFirstMatchingElement(HtmlPage page, Class<T> elementClass, String id) {
-
-        Set<T> inputs = getElements(page.getBody(), elementClass);
-        for (T input : inputs) {
-            if (input.getId().contains(id)) {
-                return input;
-            }
-        }
-        return null;
-    }
-
+    return null;
+  }
 }

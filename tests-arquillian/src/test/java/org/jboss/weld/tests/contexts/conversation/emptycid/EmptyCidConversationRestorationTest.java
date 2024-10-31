@@ -18,10 +18,12 @@ package org.jboss.weld.tests.contexts.conversation.emptycid;
 
 import static org.junit.Assert.assertEquals;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.TextPage;
+import com.gargoylesoftware.htmlunit.WebClient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -34,10 +36,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-
 /**
  *
  * @author Martin Kouba
@@ -47,22 +45,25 @@ import com.gargoylesoftware.htmlunit.WebClient;
 @RunWith(Arquillian.class)
 public class EmptyCidConversationRestorationTest {
 
-    @ArquillianResource
-    URL contextPath;
+  @ArquillianResource URL contextPath;
 
-    @Deployment(testable = false)
-    public static WebArchive createTestArchive() {
-        return ShrinkWrap.create(WebArchive.class, Utils.getDeploymentNameAsHash(EmptyCidConversationRestorationTest.class, Utils.ARCHIVE_TYPE.WAR)).addClass(EchoServlet.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
+  @Deployment(testable = false)
+  public static WebArchive createTestArchive() {
+    return ShrinkWrap
+        .create(WebArchive.class, Utils.getDeploymentNameAsHash(
+                                      EmptyCidConversationRestorationTest.class,
+                                      Utils.ARCHIVE_TYPE.WAR))
+        .addClass(EchoServlet.class)
+        .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+  }
 
-    @Test
-    public void testEmptyCidDoesNotTriggerConversationRestoration() throws FailingHttpStatusCodeException,
-            MalformedURLException, IOException {
-        WebClient webClient = new WebClient();
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        TextPage page = webClient.getPage(contextPath + "echo?say=Hello&cid=");
-        assertEquals("Hello", page.getContent());
-    }
-
+  @Test
+  public void testEmptyCidDoesNotTriggerConversationRestoration()
+      throws FailingHttpStatusCodeException, MalformedURLException,
+             IOException {
+    WebClient webClient = new WebClient();
+    webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+    TextPage page = webClient.getPage(contextPath + "echo?say=Hello&cid=");
+    assertEquals("Hello", page.getContent());
+  }
 }

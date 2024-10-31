@@ -18,5 +18,5 @@
 package org.jboss.weld.tests.decorators.defaultmethod.notDecorated.generic;
 
 public interface GenericInterface<K extends Number> {
-    Foo<K, String> defaultMethod();
+  Foo<K, String> defaultMethod();
 }
