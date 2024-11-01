@@ -84,7 +84,7 @@
         <shrinkwrap.resolver.version>3.3.2</shrinkwrap.resolver.version>
         <spotbugs-maven-plugin.version>4.8.6.5</spotbugs-maven-plugin.version>
         <spotbugs-annotations-version>4.8.6</spotbugs-annotations-version>
-        <testng.version>7.9.0</testng.version>
+        <testng.version>7.10.2</testng.version>
         <weld.api.version>6.0.Beta5</weld.api.version>
         <weld.logging.tools.version>1.0.3.Final</weld.logging.tools.version>
         <wildfly.arquillian.version>5.0.1.Final</wildfly.arquillian.version>
